@@ -324,15 +324,15 @@
       constructor() {
         this.coins = 1000;
         this.emojis = [
-          "https://imgur.com/RuJ1PRM", // cherry.png
-          "https://imgur.com/4KJavXE", // lemon.png
-          "https://imgur.com/kuzdcPD", // grapes.png
-          "https://imgur.com/l9MJKUr", // bell.png
-          "https://imgur.com/RK9Zrtm", // 7.png
-          "https://imgur.com/tqS8x2D", // watermelon.png
-          "https://imgur.com/CwWFZ8N", // diamond.png
-          "https://imgur.com/7426yVt", // clover.png
-          "https://imgur.com/7IZfAu0"  // slot.png
+          "https://i.imgur.com/RuJ1PRM.png",  // diamond.png
+          "https://i.imgur.com/kuzdcPD.png",  // 7.png
+          "https://i.imgur.com/tqS8x2D.png",  // bell.png
+          "https://i.imgur.com/7426yVt.png",  // cherry.png
+          "https://i.imgur.com/CwWFZ8N.png",  // lemon.png
+          "https://i.imgur.com/7IZfAu0.jpeg", // grapes.png
+          "https://i.imgur.com/F9kS5rt.png",  // watermelon.png
+          "https://i.imgur.com/l9MJKUr.png",  // clover.png
+          "https://i.imgur.com/4KJavXE.png"   // slot.png
         ];
         this.gridSize = { rows: 3, cols: 5 };
         this.slots = [];
@@ -363,7 +363,7 @@
           reel.className = "reel";
           const img = document.createElement("img");
           img.src = this.emojis[Math.floor(Math.random() * this.emojis.length)]; // Random initial image
-          img.alt = "Slot Symbol";
+          img.alt = ""; // No alt text to avoid fallback display
           reel.appendChild(img);
           this.slotGrid.appendChild(reel);
           this.slots.push(reel);
@@ -460,15 +460,15 @@
         // Check for wins
         let totalWin = 0;
         const payouts = {
-          'https://imgur.com/CwWFZ8N': 100,   // diamond.png
-          'https://imgur.com/RK9Zrtm': 50,    // 7.png
-          'https://imgur.com/l9MJKUr': 30,    // bell.png
-          'https://imgur.com/RuJ1PRM': 20,    // cherry.png
-          'https://imgur.com/4KJavXE': 20,    // lemon.png
-          'https://imgur.com/kuzdcPD': 20,    // grapes.png
-          'https://imgur.com/tqS8x2D': 20,    // watermelon.png
-          'https://imgur.com/7426yVt': 20,    // clover.png
-          'https://imgur.com/7IZfAu0': 20     // slot.png
+          'https://i.imgur.com/RuJ1PRM.png': 100,   // diamond.png
+          'https://i.imgur.com/kuzdcPD.png': 50,    // 7.png
+          'https://i.imgur.com/tqS8x2D.png': 30,    // bell.png
+          'https://i.imgur.com/7426yVt.png': 20,    // cherry.png
+          'https://i.imgur.com/CwWFZ8N.png': 20,    // lemon.png
+          'https://i.imgur.com/7IZfAu0.jpeg': 20,   // grapes.png
+          'https://i.imgur.com/F9kS5rt.png': 20,    // watermelon.png
+          'https://i.imgur.com/l9MJKUr.png': 20,    // clover.png
+          'https://i.imgur.com/4KJavXE.png': 20     // slot.png
         };
 
         for (let row = 0; row < this.gridSize.rows; row++) {
