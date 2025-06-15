@@ -4,33 +4,41 @@
   <meta charset="UTF-8" />
   <title>WelcomeSlotCasino899</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #0f0f0f, #1b1b1b);
+      font-family: 'Orbitron', sans-serif;
+      background: radial-gradient(circle at center, #1b1b1b 0%, #000000 100%);
       color: gold;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     .container {
-      width: 100%;
       max-width: 500px;
+      width: 100%;
       text-align: center;
+      background: #111;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+    }
+
+    h1, h2 {
+      margin: 0 0 10px;
+      text-shadow: 0 0 10px gold;
     }
 
     .screen {
       display: none;
-      background-color: #222;
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 0 20px gold;
     }
 
     .screen.active {
@@ -41,65 +49,71 @@
       padding: 12px;
       font-size: 16px;
       width: 80%;
-      margin-bottom: 20px;
+      margin: 20px 0;
       border-radius: 8px;
-      border: none;
+      border: 2px solid gold;
+      background: #222;
+      color: white;
     }
 
     button {
       padding: 12px 24px;
-      font-size: 16px;
-      background-color: gold;
+      font-size: 18px;
+      background: linear-gradient(to right, gold, orange);
       color: black;
       border: none;
       border-radius: 10px;
       cursor: pointer;
       margin-top: 10px;
+      font-weight: bold;
     }
 
     button:hover {
-      background-color: orange;
+      background: linear-gradient(to right, orange, gold);
     }
 
     .slot-grid {
       display: grid;
-      grid-template-columns: repeat(3, 80px);
-      grid-gap: 10px;
+      grid-template-columns: repeat(3, 90px);
+      gap: 10px;
       justify-content: center;
       margin: 20px 0;
     }
 
     .reel {
-      background: #000;
-      border: 2px solid #fff;
-      border-radius: 8px;
-      width: 80px;
-      height: 80px;
+      background: black;
+      border: 3px solid gold;
+      border-radius: 10px;
+      width: 90px;
+      height: 90px;
+      font-size: 40px;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 38px;
-      transition: transform 0.2s;
-    }
-
-    #result {
-      margin-top: 15px;
-      font-size: 18px;
-    }
-
-    #coins {
-      margin: 10px 0;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+      transition: transform 0.3s ease;
     }
 
     .host-image {
       width: 100%;
-      border-radius: 10px;
+      border-radius: 15px;
       margin-bottom: 15px;
     }
 
-    h1 {
-      margin-bottom: 5px;
-      text-shadow: 0 0 5px gold;
+    #result {
+      font-size: 20px;
+      margin-top: 15px;
+      min-height: 24px;
+    }
+
+    #coins {
+      font-size: 18px;
+      margin: 15px 0;
+      background: #222;
+      padding: 8px 20px;
+      border-radius: 10px;
+      display: inline-block;
+      border: 2px solid gold;
     }
   </style>
 </head>
@@ -107,21 +121,22 @@
   <div class="container">
     <!-- Login Screen -->
     <div id="loginScreen" class="screen active">
-      <h2>🎮 Welcome to WelcomeSlotCasino899</h2>
+      <h2>🎮 Welcome to</h2>
+      <h1>WelcomeSlotCasino899</h1>
       <input type="text" id="username" placeholder="Enter your name" />
       <br />
-      <button onclick="login()">Login</button>
+      <button onclick="login()">Enter Casino</button>
     </div>
 
-    <!-- Casino Screen -->
+    <!-- Game Screen -->
     <div id="casinoScreen" class="screen">
       <h1>🏆 WelcomeSlotCasino899</h1>
       <h2>🎰 Hello, <span id="playerName"></span>!</h2>
-      <img src="https://i.imgur.com/hVqKwBR.png" alt="Casino Host" class="host-image" />
+      <img src="https://i.imgur.com/hVqKwBR.png" alt="Host" class="host-image" />
       <div id="coins">💰 Coins: <span id="coinCount">100</span></div>
 
       <div class="slot-grid" id="slotGrid">
-        <!-- 3x3 grid will be generated here -->
+        <!-- Reels will be inserted here -->
       </div>
 
       <button onclick="spin()">🎲 Spin (10 Coins)</button>
@@ -139,7 +154,7 @@
     const coinCount = document.getElementById("coinCount");
     const result = document.getElementById("result");
 
-    // Generate 3x3 grid
+    // Initialize slot grid
     for (let i = 0; i < gridSize * gridSize; i++) {
       const reel = document.createElement("div");
       reel.className = "reel";
@@ -169,13 +184,13 @@
       coinCount.textContent = coins;
       result.textContent = "Spinning...";
 
-      // Show spinning animation
+      // Animation phase
       slots.forEach(slot => {
         slot.textContent = "🎲";
-        slot.style.transform = "rotate(360deg)";
+        slot.style.transform = "rotateY(360deg)";
         setTimeout(() => {
-          slot.style.transform = "rotate(0deg)";
-        }, 400);
+          slot.style.transform = "rotateY(0deg)";
+        }, 300);
       });
 
       setTimeout(() => {
@@ -186,11 +201,11 @@
           slot.textContent = symbol;
         });
 
-        // Check horizontal rows for match
+        // Check for winning rows
         let win = false;
         for (let i = 0; i < gridSize; i++) {
           const row = symbols.slice(i * gridSize, i * gridSize + gridSize);
-          if (row.every(val => val === row[0])) {
+          if (row.every(s => s === row[0])) {
             win = true;
             coins += 50;
             result.textContent = `🎉 JACKPOT on row ${i + 1}! +50 Coins!`;
