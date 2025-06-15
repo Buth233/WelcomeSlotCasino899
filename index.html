@@ -156,7 +156,7 @@
     }
 
     .reel.spinning img {
-      animation: pulse 0.5s ease-in-out infinite; /* Pulse effect during spin, no blur */
+      animation: pulse 0.5s ease-in-out infinite;
     }
 
     @keyframes pulse {
@@ -166,7 +166,7 @@
     }
 
     .reel.losing img {
-      animation: shake 0.3s ease-in-out; /* Shake effect on loss */
+      animation: shake 0.3s ease-in-out;
       filter: brightness(0.5);
     }
 
@@ -179,7 +179,7 @@
     }
 
     .reel.winning img {
-      animation: shine 0.5s ease-in-out 3; /* Shine effect on win */
+      animation: shine 0.5s ease-in-out 3;
       filter: brightness(1.2);
     }
 
@@ -194,19 +194,31 @@
       box-shadow: 0 0 20px #ff6200;
     }
 
-    /* Added: Ruler effect for winning rows */
+    /* Updated: Graph-like ruler effect for winning rows */
     .win-ruler {
       position: absolute;
-      height: 4px;
-      background: #ff6200;
-      box-shadow: 0 0 10px #ff6200;
       z-index: 10;
-      animation: drawRuler 0.5s ease-in-out forwards;
     }
 
-    @keyframes drawRuler {
-      0% { width: 0; opacity: 0; }
-      100% { width: 100%; opacity: 1; }
+    .win-ruler svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .win-ruler path {
+      stroke: #ff6200;
+      stroke-width: 4;
+      fill: none;
+      stroke-dasharray: 1000;
+      stroke-dashoffset: 1000;
+      animation: drawPath 1s ease-in-out forwards;
+      filter: drop-shadow(0 0 5px #ff6200);
+    }
+
+    @keyframes drawPath {
+      to {
+        stroke-dashoffset: 0;
+      }
     }
 
     .reel-effect {
@@ -565,24 +577,10 @@
         // Fast spin duration (1.5 seconds)
         await new Promise(resolve => setTimeout(resolve, 1500));
 
-        // Final symbols with bias toward wins
+        // Final symbols with natural probability
         let symbols = [];
-        for (let row = 0; row < this.gridSize.rows; row++) {
-          const rowSymbols = [];
-          // 50% chance to create a winning row (3-5 consecutive symbols)
-          if (Math.random() < 0.5) {
-            const symbol = this.emojis[Math.floor(Math.random() * this.emojis.length)];
-            const matchCount = Math.floor(Math.random() * 3) + 3; // 3, 4, or 5 matches
-            for (let col = 0; col < this.gridSize.cols; col++) {
-              rowSymbols.push(col < matchCount ? symbol : this.emojis[Math.floor(Math.random() * this.emojis.length)]);
-            }
-          } else {
-            // Random symbols for non-winning rows
-            for (let col = 0; col < this.gridSize.cols; col++) {
-              rowSymbols.push(this.emojis[Math.floor(Math.random() * this.emojis.length)]);
-            }
-          }
-          symbols.push(...rowSymbols);
+        for (let i = 0; i < this.gridSize.rows * this.gridSize.cols; i++) {
+          symbols.push(this.emojis[Math.floor(Math.random() * this.emojis.length)]);
         }
 
         this.slots.forEach((slot, index) => {
@@ -643,8 +641,8 @@
               this.slots[index].appendChild(effect);
               setTimeout(() => effect.remove(), 1000);
             });
-            // Add ruler effect for winning row
-            this.addRulerEffect(row);
+            // Add graph-like ruler effect
+            this.addRulerEffect(row, count);
             this.showWinEffect(count);
           });
           this.coins += totalWin;
@@ -672,17 +670,40 @@
         this.isSpinning = false;
       }
 
-      addRulerEffect(row) {
+      addRulerEffect(row, matchCount) {
         const slotMachine = document.querySelector('.slot-machine');
         const ruler = document.createElement("div");
         ruler.className = "win-ruler";
-        // Position ruler at the center of the row
+
+        // Calculate dimensions and position
         const rowHeight = 100; // Reel height
         const gap = 10; // Gap between reels
         const padding = 20; // Slot machine padding
-        const topPosition = padding + row * (rowHeight + gap) + rowHeight / 2;
+        const svgWidth = (matchCount * 100) + ((matchCount - 1) * gap); // Width based on matching reels
+        const svgHeight = 50; // Height for curve
+        const topPosition = padding + row * (rowHeight + gap) + (rowHeight / 2) - (svgHeight / 2);
+
         ruler.style.top = `${topPosition}px`;
         ruler.style.left = `${padding}px`;
+        ruler.style.width = `${svgWidth}px`;
+        ruler.style.height = `${svgHeight}px`;
+
+        // Create SVG with a curved path
+        const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        svg.setAttribute("width", svgWidth);
+        svg.setAttribute("height", svgHeight);
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+
+        // Generate a wavy path
+        const startX = 0;
+        const endX = svgWidth;
+        const midY = svgHeight / 2;
+        const controlOffset = svgHeight / 4;
+        const pathData = `M ${startX},${midY} Q ${(endX / 4)},${midY - controlOffset} ${(endX / 2)},${midY} T ${endX},${midY}`;
+        path.setAttribute("d", pathData);
+
+        svg.appendChild(path);
+        ruler.appendChild(svg);
         slotMachine.appendChild(ruler);
         setTimeout(() => ruler.remove(), 2000);
       }
