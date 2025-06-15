@@ -68,11 +68,16 @@
       margin: 20px 0;
     }
 
+    .password-wrapper {
+      position: relative;
+      width: 80%;
+      max-width: 350px;
+    }
+
     input[type="text"], input[type="password"] {
       padding: 12px;
       font-size: 16px;
-      width: 80%;
-      max-width: 350px;
+      width: 100%;
       border-radius: 10px;
       border: 2px solid #e6b800;
       background: #2a2a2a;
@@ -85,6 +90,21 @@
       outline: none;
       border-color: #ff6200;
       box-shadow: 0 0 10px rgba(255, 98, 0, 0.5);
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      font-size: 18px;
+      color: #e6b800;
+      transition: color 0.3s ease;
+    }
+
+    .toggle-password:hover {
+      color: #ff6200;
     }
 
     button {
@@ -257,7 +277,10 @@
       <h2>Enter the VIP Lounge</h2>
       <div class="form-group">
         <input type="text" id="username" placeholder="Username" />
-        <input type="password" id="password" placeholder="Password" />
+        <div class="password-wrapper">
+          <input type="password" id="password" placeholder="Password" />
+          <span class="toggle-password" onclick="togglePassword('password')">👁️</span>
+        </div>
         <div id="loginError" class="error"></div>
         <button onclick="login()">Login</button>
         <button onclick="showRegister()">Register</button>
@@ -271,7 +294,10 @@
       <h2>Become a VIP</h2>
       <div class="form-group">
         <input type="text" id="regUsername" placeholder="Choose Username" />
-        <input type="password" id="regPassword" placeholder="Choose Password" />
+        <div class="password-wrapper">
+          <input type="password" id="regPassword" placeholder="Choose Password" />
+          <span class="toggle-password" onclick="togglePassword('regPassword')">👁️</span>
+        </div>
         <div id="registerError" class="error"></div>
         <button onclick="register()">Register</button>
         <button onclick="showLogin()">Back to Login</button>
@@ -543,6 +569,19 @@
     function spin() { game.spin(); }
     function autoSpin() { game.autoSpin(); }
     function logout() { game.logout(); }
+
+    // Toggle password visibility
+    function togglePassword(inputId) {
+      const passwordInput = document.getElementById(inputId);
+      const toggleIcon = passwordInput.nextElementSibling;
+      if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        toggleIcon.textContent = "👁️‍🗨️"; // Open eye
+      } else {
+        passwordInput.type = "password";
+        toggleIcon.textContent = "👁️"; // Closed eye
+      }
+    }
   </script>
 </body>
 </html>
