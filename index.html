@@ -11,7 +11,7 @@
       margin: 0;
       padding: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: radial-gradient(#0b0c10, #1f2833);
+      background: linear-gradient(135deg, #0f0f0f, #1b1b1b);
       color: gold;
       display: flex;
       align-items: center;
@@ -21,7 +21,7 @@
 
     .container {
       width: 100%;
-      max-width: 400px;
+      max-width: 500px;
       text-align: center;
     }
 
@@ -61,8 +61,10 @@
       background-color: orange;
     }
 
-    .reels {
-      display: flex;
+    .slot-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 80px);
+      grid-gap: 10px;
       justify-content: center;
       margin: 20px 0;
     }
@@ -71,17 +73,13 @@
       background: #000;
       border: 2px solid #fff;
       border-radius: 8px;
-      width: 60px;
-      height: 60px;
-      margin: 0 8px;
+      width: 80px;
+      height: 80px;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 40px;
-    }
-
-    #host {
-      margin-bottom: 10px;
+      font-size: 38px;
+      transition: transform 0.2s;
     }
 
     #result {
@@ -107,7 +105,6 @@
 </head>
 <body>
   <div class="container">
-
     <!-- Login Screen -->
     <div id="loginScreen" class="screen active">
       <h2>🎮 Welcome to WelcomeSlotCasino899</h2>
@@ -119,14 +116,12 @@
     <!-- Casino Screen -->
     <div id="casinoScreen" class="screen">
       <h1>🏆 WelcomeSlotCasino899</h1>
-      <h2>🎰 Welcome, <span id="playerName"></span>!</h2>
+      <h2>🎰 Hello, <span id="playerName"></span>!</h2>
       <img src="https://i.imgur.com/hVqKwBR.png" alt="Casino Host" class="host-image" />
       <div id="coins">💰 Coins: <span id="coinCount">100</span></div>
 
-      <div class="reels">
-        <div class="reel" id="r1">❓</div>
-        <div class="reel" id="r2">❓</div>
-        <div class="reel" id="r3">❓</div>
+      <div class="slot-grid" id="slotGrid">
+        <!-- 3x3 grid will be generated here -->
       </div>
 
       <button onclick="spin()">🎲 Spin (10 Coins)</button>
@@ -136,21 +131,29 @@
 
   <script>
     let coins = 100;
-    const emojis = ["🍒", "🍋", "🍇", "🔔", "7️⃣", "🍉"];
+    const emojis = ["🍒", "🍋", "🍇", "🔔", "7️⃣", "🍉", "💎", "🍀", "🎲"];
+    const gridSize = 3;
+    let slots = [];
 
-    const r1 = document.getElementById("r1");
-    const r2 = document.getElementById("r2");
-    const r3 = document.getElementById("r3");
-    const result = document.getElementById("result");
+    const slotGrid = document.getElementById("slotGrid");
     const coinCount = document.getElementById("coinCount");
+    const result = document.getElementById("result");
+
+    // Generate 3x3 grid
+    for (let i = 0; i < gridSize * gridSize; i++) {
+      const reel = document.createElement("div");
+      reel.className = "reel";
+      reel.textContent = "❓";
+      slotGrid.appendChild(reel);
+      slots.push(reel);
+    }
 
     function login() {
       const name = document.getElementById("username").value.trim();
-      if (name === "") {
+      if (!name) {
         alert("Please enter your name.");
         return;
       }
-
       document.getElementById("playerName").textContent = name;
       document.getElementById("loginScreen").classList.remove("active");
       document.getElementById("casinoScreen").classList.add("active");
@@ -164,33 +167,43 @@
 
       coins -= 10;
       coinCount.textContent = coins;
+      result.textContent = "Spinning...";
 
-      const slot1 = emojis[Math.floor(Math.random() * emojis.length)];
-      const slot2 = emojis[Math.floor(Math.random() * emojis.length)];
-      const slot3 = emojis[Math.floor(Math.random() * emojis.length)];
-
-      r1.textContent = "🎲";
-      r2.textContent = "🎲";
-      r3.textContent = "🎲";
-      result.textContent = "";
+      // Show spinning animation
+      slots.forEach(slot => {
+        slot.textContent = "🎲";
+        slot.style.transform = "rotate(360deg)";
+        setTimeout(() => {
+          slot.style.transform = "rotate(0deg)";
+        }, 400);
+      });
 
       setTimeout(() => {
-        r1.textContent = slot1;
-        r2.textContent = slot2;
-        r3.textContent = slot3;
+        let symbols = [];
+        slots.forEach(slot => {
+          const symbol = emojis[Math.floor(Math.random() * emojis.length)];
+          symbols.push(symbol);
+          slot.textContent = symbol;
+        });
 
-        if (slot1 === slot2 && slot2 === slot3) {
-          coins += 50;
-          result.textContent = "🎉 JACKPOT! +50 Coins!";
-        } else if (slot1 === slot2 || slot2 === slot3 || slot1 === slot3) {
-          coins += 20;
-          result.textContent = "✨ Nice! +20 Coins!";
-        } else {
-          result.textContent = "😢 No match!";
+        // Check horizontal rows for match
+        let win = false;
+        for (let i = 0; i < gridSize; i++) {
+          const row = symbols.slice(i * gridSize, i * gridSize + gridSize);
+          if (row.every(val => val === row[0])) {
+            win = true;
+            coins += 50;
+            result.textContent = `🎉 JACKPOT on row ${i + 1}! +50 Coins!`;
+            break;
+          }
+        }
+
+        if (!win) {
+          result.textContent = "😢 No match this time.";
         }
 
         coinCount.textContent = coins;
-      }, 800);
+      }, 600);
     }
   </script>
 </body>
