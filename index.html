@@ -156,8 +156,7 @@
     }
 
     .reel.spinning img {
-      filter: blur(3px); /* Blur effect during spin */
-      animation: pulse 0.5s ease-in-out infinite; /* Pulse effect during spin */
+      animation: pulse 0.5s ease-in-out infinite; /* Pulse effect during spin, no blur */
     }
 
     @keyframes pulse {
@@ -193,6 +192,21 @@
     .reel.winning {
       border: 3px solid #ff6200;
       box-shadow: 0 0 20px #ff6200;
+    }
+
+    /* Added: Ruler effect for winning rows */
+    .win-ruler {
+      position: absolute;
+      height: 4px;
+      background: #ff6200;
+      box-shadow: 0 0 10px #ff6200;
+      z-index: 10;
+      animation: drawRuler 0.5s ease-in-out forwards;
+    }
+
+    @keyframes drawRuler {
+      0% { width: 0; opacity: 0; }
+      100% { width: 100%; opacity: 1; }
     }
 
     .reel-effect {
@@ -534,7 +548,7 @@
           const existingEffect = slot.querySelector('.reel-effect');
           if (existingEffect) existingEffect.remove();
         });
-        document.querySelectorAll('.coin-effect, .sparkle-effect, .win-banner').forEach(el => el.remove());
+        document.querySelectorAll('.coin-effect, .sparkle-effect, .win-banner, .win-ruler').forEach(el => el.remove());
 
         // Add spinning effect above each reel and animate images
         this.slots.forEach(slot => {
@@ -551,13 +565,29 @@
         // Fast spin duration (1.5 seconds)
         await new Promise(resolve => setTimeout(resolve, 1500));
 
-        // Final symbols
+        // Final symbols with bias toward wins
         let symbols = [];
-        this.slots.forEach(slot => {
+        for (let row = 0; row < this.gridSize.rows; row++) {
+          const rowSymbols = [];
+          // 50% chance to create a winning row (3-5 consecutive symbols)
+          if (Math.random() < 0.5) {
+            const symbol = this.emojis[Math.floor(Math.random() * this.emojis.length)];
+            const matchCount = Math.floor(Math.random() * 3) + 3; // 3, 4, or 5 matches
+            for (let col = 0; col < this.gridSize.cols; col++) {
+              rowSymbols.push(col < matchCount ? symbol : this.emojis[Math.floor(Math.random() * this.emojis.length)]);
+            }
+          } else {
+            // Random symbols for non-winning rows
+            for (let col = 0; col < this.gridSize.cols; col++) {
+              rowSymbols.push(this.emojis[Math.floor(Math.random() * this.emojis.length)]);
+            }
+          }
+          symbols.push(...rowSymbols);
+        }
+
+        this.slots.forEach((slot, index) => {
           const img = slot.querySelector('img');
-          const symbol = this.emojis[Math.floor(Math.random() * this.emojis.length)];
-          symbols.push(symbol);
-          img.src = symbol;
+          img.src = symbols[index];
           img.onerror = () => console.error(`Image failed to load after spin: ${img.src}`);
           slot.classList.remove("spinning");
           const spinEffect = slot.querySelector('.reel-effect');
@@ -613,6 +643,8 @@
               this.slots[index].appendChild(effect);
               setTimeout(() => effect.remove(), 1000);
             });
+            // Add ruler effect for winning row
+            this.addRulerEffect(row);
             this.showWinEffect(count);
           });
           this.coins += totalWin;
@@ -638,6 +670,21 @@
 
         this.updateUI();
         this.isSpinning = false;
+      }
+
+      addRulerEffect(row) {
+        const slotMachine = document.querySelector('.slot-machine');
+        const ruler = document.createElement("div");
+        ruler.className = "win-ruler";
+        // Position ruler at the center of the row
+        const rowHeight = 100; // Reel height
+        const gap = 10; // Gap between reels
+        const padding = 20; // Slot machine padding
+        const topPosition = padding + row * (rowHeight + gap) + rowHeight / 2;
+        ruler.style.top = `${topPosition}px`;
+        ruler.style.left = `${padding}px`;
+        slotMachine.appendChild(ruler);
+        setTimeout(() => ruler.remove(), 2000);
       }
 
       showWinEffect(matchCount) {
