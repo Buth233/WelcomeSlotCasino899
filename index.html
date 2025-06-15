@@ -14,13 +14,28 @@
 
     body {
       font-family: 'Montserrat', sans-serif;
-      background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+      /* Updated: New background image */
+      background: url('https://i.imgur.com/PPhQ6vn.jpeg') no-repeat center center fixed;
+      background-size: cover;
       color: #e6b800;
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
       overflow-x: hidden;
+      /* Subtle overlay to ensure text readability */
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4); /* Dark overlay for contrast */
+      z-index: -1;
     }
 
     .container {
@@ -32,6 +47,7 @@
       box-shadow: 0 0 40px rgba(230, 184, 0, 0.6);
       position: relative;
       transition: transform 0.3s ease;
+      z-index: 1; /* Ensure container is above overlay */
     }
 
     .container:hover {
@@ -194,10 +210,12 @@
       box-shadow: 0 0 20px #ff6200;
     }
 
-    /* Updated: Graph-like ruler effect for winning rows */
     .win-ruler {
       position: absolute;
       z-index: 10;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(230, 184, 0, 0.2);
+      border-radius: 5px;
     }
 
     .win-ruler svg {
@@ -205,20 +223,36 @@
       height: 100%;
     }
 
-    .win-ruler path {
+    .win-ruler .grid-line {
+      stroke: rgba(230, 184, 0, 0.2);
+      stroke-width: 1;
+    }
+
+    .win-ruler .graph-line {
       stroke: #ff6200;
       stroke-width: 4;
       fill: none;
       stroke-dasharray: 1000;
       stroke-dashoffset: 1000;
-      animation: drawPath 1s ease-in-out forwards;
+      animation: drawGraph 1.2s ease-in-out forwards;
       filter: drop-shadow(0 0 5px #ff6200);
     }
 
-    @keyframes drawPath {
-      to {
-        stroke-dashoffset: 0;
-      }
+    .win-ruler .data-point {
+      fill: #ff6200;
+      stroke: #fff;
+      stroke-width: 2;
+      opacity: 0;
+      animation: appearPoint 0.5s ease-in forwards;
+      animation-delay: calc(0.2s * var(--index));
+    }
+
+    @keyframes drawGraph {
+      to { stroke-dashoffset: 0; }
+    }
+
+    @keyframes appearPoint {
+      to { opacity: 1; transform: scale(1.2); }
     }
 
     .reel-effect {
@@ -577,10 +611,24 @@
         // Fast spin duration (1.5 seconds)
         await new Promise(resolve => setTimeout(resolve, 1500));
 
-        // Final symbols with natural probability
+        // Final symbols with ~30% win chance per row
         let symbols = [];
-        for (let i = 0; i < this.gridSize.rows * this.gridSize.cols; i++) {
-          symbols.push(this.emojis[Math.floor(Math.random() * this.emojis.length)]);
+        for (let row = 0; row < this.gridSize.rows; row++) {
+          const rowSymbols = [];
+          // 30% chance for a winning row (3-5 matches)
+          if (Math.random() < 0.3) {
+            const symbol = this.emojis[Math.floor(Math.random() * this.emojis.length)];
+            const matchCount = Math.floor(Math.random() * 3) + 3; // 3, 4, or 5
+            for (let col = 0; col < this.gridSize.cols; col++) {
+              rowSymbols.push(col < matchCount ? symbol : this.emojis[Math.floor(Math.random() * this.emojis.length)]);
+            }
+          } else {
+            // Random symbols
+            for (let col = 0; col < this.gridSize.cols; col++) {
+              rowSymbols.push(this.emojis[Math.floor(Math.random() * this.emojis.length)]);
+            }
+          }
+          symbols.push(...rowSymbols);
         }
 
         this.slots.forEach((slot, index) => {
@@ -592,7 +640,7 @@
           if (spinEffect) spinEffect.remove();
         });
 
-        // Check for wins (consecutive symbols in a row)
+        // Check for wins
         let totalWin = 0;
         const payouts = {
           'https://i.imgur.com/RuJ1PRM.png': 100,   // diamond.png
@@ -641,7 +689,6 @@
               this.slots[index].appendChild(effect);
               setTimeout(() => effect.remove(), 1000);
             });
-            // Add graph-like ruler effect
             this.addRulerEffect(row, count);
             this.showWinEffect(count);
           });
@@ -675,12 +722,12 @@
         const ruler = document.createElement("div");
         ruler.className = "win-ruler";
 
-        // Calculate dimensions and position
+        // Calculate dimensions
         const rowHeight = 100; // Reel height
         const gap = 10; // Gap between reels
         const padding = 20; // Slot machine padding
-        const svgWidth = (matchCount * 100) + ((matchCount - 1) * gap); // Width based on matching reels
-        const svgHeight = 50; // Height for curve
+        const svgWidth = (matchCount * 100) + ((matchCount - 1) * gap);
+        const svgHeight = 60; // Height for graph
         const topPosition = padding + row * (rowHeight + gap) + (rowHeight / 2) - (svgHeight / 2);
 
         ruler.style.top = `${topPosition}px`;
@@ -688,24 +735,48 @@
         ruler.style.width = `${svgWidth}px`;
         ruler.style.height = `${svgHeight}px`;
 
-        // Create SVG with a curved path
+        // Create SVG
         const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         svg.setAttribute("width", svgWidth);
         svg.setAttribute("height", svgHeight);
-        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
 
-        // Generate a wavy path
-        const startX = 0;
-        const endX = svgWidth;
-        const midY = svgHeight / 2;
-        const controlOffset = svgHeight / 4;
-        const pathData = `M ${startX},${midY} Q ${(endX / 4)},${midY - controlOffset} ${(endX / 2)},${midY} T ${endX},${midY}`;
-        path.setAttribute("d", pathData);
+        // Add grid lines (horizontal)
+        for (let y = 15; y < svgHeight; y += 15) {
+          const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+          line.setAttribute("x1", 0);
+          line.setAttribute("y1", y);
+          line.setAttribute("x2", svgWidth);
+          line.setAttribute("y2", y);
+          line.setAttribute("class", "grid-line");
+          svg.appendChild(line);
+        }
 
-        svg.appendChild(path);
+        // Generate points for graph
+        const points = [];
+        const stepWidth = svgWidth / (matchCount - 1);
+        for (let i = 0; i < matchCount; i++) {
+          const x = i * stepWidth;
+          const y = 20 + Math.random() * (svgHeight - 40); // Random Y for jagged effect
+          points.push(`${x},${y}`);
+          // Add data point
+          const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+          circle.setAttribute("cx", x);
+          circle.setAttribute("cy", y);
+          circle.setAttribute("r", 5);
+          circle.setAttribute("class", "data-point");
+          circle.style.setProperty("--index", i);
+          svg.appendChild(circle);
+        }
+
+        // Create polyline for graph
+        const polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+        polyline.setAttribute("points", points.join(" "));
+        polyline.setAttribute("class", "graph-line");
+        svg.appendChild(polyline);
+
         ruler.appendChild(svg);
         slotMachine.appendChild(ruler);
-        setTimeout(() => ruler.remove(), 2000);
+        setTimeout(() => ruler.remove(), 2500);
       }
 
       showWinEffect(matchCount) {
