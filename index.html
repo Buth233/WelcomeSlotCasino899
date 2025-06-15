@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>WelcomeSlotCasino899</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
   <style>
     * {
       box-sizing: border-box;
@@ -14,27 +14,41 @@
       margin: 0;
       padding: 0;
       font-family: 'Orbitron', sans-serif;
-      background: radial-gradient(circle at center, #1b1b1b 0%, #000000 100%);
-      color: gold;
-      height: 100vh;
+      background: radial-gradient(circle at center, #2a2a2a 0%, #000000 100%);
+      color: #ffd700;
+      min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
+      overflow: hidden;
     }
 
     .container {
-      max-width: 500px;
-      width: 100%;
+      max-width: 600px;
+      width: 90%;
       text-align: center;
-      background: #111;
-      border-radius: 20px;
-      padding: 30px;
-      box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+      background: rgba(17, 17, 17, 0.95);
+      border-radius: 25px;
+      padding: 40px;
+      box-shadow: 0 0 30px rgba(255, 215, 0, 0.7);
+      position: relative;
+      transition: transform 0.3s ease;
     }
 
-    h1, h2 {
-      margin: 0 0 10px;
-      text-shadow: 0 0 10px gold;
+    .container:hover {
+      transform: scale(1.02);
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin: 0 0 15px;
+      text-shadow: 0 0 15px #ffd700;
+    }
+
+    h2 {
+      font-size: 1.5em;
+      margin: 0 0 20px;
+      text-shadow: 0 0 10px #ffd700;
     }
 
     .screen {
@@ -45,75 +59,130 @@
       display: block;
     }
 
-    input[type="text"] {
+    .form-group {
+      margin: 20px 0;
+    }
+
+    input[type="text"], input[type="password"] {
       padding: 12px;
       font-size: 16px;
       width: 80%;
-      margin: 20px 0;
+      max-width: 300px;
+      margin: 10px 0;
       border-radius: 8px;
-      border: 2px solid gold;
+      border: 2px solid #ffd700;
       background: #222;
       color: white;
+      font-family: 'Orbitron', sans-serif;
+      transition: border-color 0.3s ease;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #ff8c00;
     }
 
     button {
-      padding: 12px 24px;
+      padding: 12px 30px;
       font-size: 18px;
-      background: linear-gradient(to right, gold, orange);
-      color: black;
+      background: linear-gradient(45deg, #ffd700, #ff8c00);
+      color: #000;
       border: none;
       border-radius: 10px;
       cursor: pointer;
-      margin-top: 10px;
-      font-weight: bold;
+      margin: 10px;
+      font-weight: 700;
+      transition: background 0.3s ease, transform 0.2s ease;
     }
 
     button:hover {
-      background: linear-gradient(to right, orange, gold);
+      background: linear-gradient(45deg, #ff8c00, #ffd700);
+      transform: translateY(-2px);
+    }
+
+    button:active {
+      transform: translateY(0);
     }
 
     .slot-grid {
       display: grid;
-      grid-template-columns: repeat(3, 90px);
-      gap: 10px;
+      grid-template-columns: repeat(3, 100px);
+      gap: 15px;
       justify-content: center;
-      margin: 20px 0;
+      margin: 30px 0;
+      perspective: 1000px;
     }
 
     .reel {
-      background: black;
-      border: 3px solid gold;
-      border-radius: 10px;
-      width: 90px;
-      height: 90px;
-      font-size: 40px;
+      background: #000;
+      border: 4px solid #ffd700;
+      border-radius: 12px;
+      width: 100px;
+      height: 100px;
+      font-size: 50px;
       display: flex;
       justify-content: center;
       align-items: center;
-      box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-      transition: transform 0.3s ease;
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
+      transition: transform 0.5s ease, box-shadow 0.3s ease;
+      transform-style: preserve-3d;
+    }
+
+    .reel.spinning {
+      transform: rotateX(360deg);
+      box-shadow: 0 0 25px rgba(255, 215, 0, 1);
     }
 
     .host-image {
       width: 100%;
+      max-width: 400px;
       border-radius: 15px;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
     }
 
     #result {
-      font-size: 20px;
-      margin-top: 15px;
-      min-height: 24px;
+      font-size: 22px;
+      margin: 20px 0;
+      min-height: 30px;
+      text-shadow: 0 0 10px #ffd700;
     }
 
     #coins {
-      font-size: 18px;
-      margin: 15px 0;
+      font-size: 20px;
+      margin: 20px 0;
       background: #222;
-      padding: 8px 20px;
-      border-radius: 10px;
+      padding: 10px 25px;
+      border-radius: 12px;
       display: inline-block;
-      border: 2px solid gold;
+      border: 2px solid #ffd700;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    }
+
+    .error {
+      color: #ff4444;
+      font-size: 16px;
+      margin: 10px 0;
+    }
+
+    .link {
+      color: #ff8c00;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .link:hover {
+      text-decoration: underline;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    .pulse {
+      animation: pulse 2s infinite;
     }
   </style>
 </head>
@@ -121,105 +190,220 @@
   <div class="container">
     <!-- Login Screen -->
     <div id="loginScreen" class="screen active">
-      <h2>🎮 Welcome to</h2>
-      <h1>WelcomeSlotCasino899</h1>
-      <input type="text" id="username" placeholder="Enter your name" />
-      <br />
-      <button onclick="login()">Enter Casino</button>
+      <h1>🎰 WelcomeSlotCasino899</h1>
+      <h2>Login to Your Account</h2>
+      <div class="form-group">
+        <input type="text" id="username" placeholder="Username" />
+        <input type="password" id="password" placeholder="Password" />
+        <div id="loginError" class="error"></div>
+        <button onclick="login()">Login</button>
+        <button onclick="showRegister()">Register</button>
+      </div>
+      <p>Not a member? <a class="link" onclick="showRegister()">Create an account</a></p>
+    </div>
+
+    <!-- Register Screen -->
+    <div id="registerScreen" class="screen">
+      <h1>🎰 WelcomeSlotCasino899</h1>
+      <h2>Create Your Account</h2>
+      <div class="form-group">
+        <input type="text" id="regUsername" placeholder="Choose Username" />
+        <input type="password" id="regPassword" placeholder="Choose Password" />
+        <div id="registerError" class="error"></div>
+        <button onclick="register()">Register</button>
+        <button onclick="showLogin()">Back to Login</button>
+      </div>
+      <p>Already have an account? <a class="link" onclick="showLogin()">Login here</a></p>
     </div>
 
     <!-- Game Screen -->
     <div id="casinoScreen" class="screen">
       <h1>🏆 WelcomeSlotCasino899</h1>
       <h2>🎰 Hello, <span id="playerName"></span>!</h2>
-      <img src="https://i.imgur.com/hVqKwBR.png" alt="Host" class="host-image" />
+      <img src="https://i.imgur.com/hVqKwBR.png" alt="Host" class="host-image pulse" />
       <div id="coins">💰 Coins: <span id="coinCount">100</span></div>
 
-      <div class="slot-grid" id="slotGrid">
-        <!-- Reels will be inserted here -->
-      </div>
+      <div class="slot-grid" id="slotGrid"></div>
 
       <button onclick="spin()">🎲 Spin (10 Coins)</button>
       <div id="result"></div>
+      <button onclick="logout()">Logout</button>
     </div>
   </div>
 
   <script>
-    let coins = 100;
-    const emojis = ["🍒", "🍋", "🍇", "🔔", "7️⃣", "🍉", "💎", "🍀", "🎲"];
-    const gridSize = 3;
-    let slots = [];
+    class CasinoGame {
+      constructor() {
+        this.coins = 100;
+        this.emojis = ["🍒", "🍋", "🍇", "🔔", "7️⃣", "🍉", "💎", "🍀", "🎲"];
+        this.gridSize = 3;
+        this.slots = [];
+        this.isSpinning = false;
+        this.users = JSON.parse(localStorage.getItem('casinoUsers')) || {};
 
-    const slotGrid = document.getElementById("slotGrid");
-    const coinCount = document.getElementById("coinCount");
-    const result = document.getElementById("result");
+        // DOM Elements
+        this.slotGrid = document.getElementById("slotGrid");
+        this.coinCount = document.getElementById("coinCount");
+        this.result = document.getElementById("result");
+        this.playerName = document.getElementById("playerName");
 
-    // Initialize slot grid
-    for (let i = 0; i < gridSize * gridSize; i++) {
-      const reel = document.createElement("div");
-      reel.className = "reel";
-      reel.textContent = "❓";
-      slotGrid.appendChild(reel);
-      slots.push(reel);
-    }
+        // Audio
+        this.spinSound = new Audio('https://freesound.org/data/previews/184/184438_2394238-lq.mp3');
+        this.winSound = new Audio('https://freesound.org/data/previews/387/387739_4068518-lq.mp3');
+        this.loseSound = new Audio('https://freesound.org/data/previews/198/198841_3665592-lq.mp3');
 
-    function login() {
-      const name = document.getElementById("username").value.trim();
-      if (!name) {
-        alert("Please enter your name.");
-        return;
-      }
-      document.getElementById("playerName").textContent = name;
-      document.getElementById("loginScreen").classList.remove("active");
-      document.getElementById("casinoScreen").classList.add("active");
-    }
-
-    function spin() {
-      if (coins < 10) {
-        result.textContent = "💸 Not enough coins!";
-        return;
+        this.init();
       }
 
-      coins -= 10;
-      coinCount.textContent = coins;
-      result.textContent = "Spinning...";
+      init() {
+        // Initialize slot grid
+        for (let i = 0; i < this.gridSize * this.gridSize; i++) {
+          const reel = document.createElement("div");
+          reel.className = "reel";
+          reel.textContent = "❓";
+          this.slotGrid.appendChild(reel);
+          this.slots.push(reel);
+        }
 
-      // Animation phase
-      slots.forEach(slot => {
-        slot.textContent = "🎲";
-        slot.style.transform = "rotateY(360deg)";
-        setTimeout(() => {
-          slot.style.transform = "rotateY(0deg)";
-        }, 300);
-      });
+        // Update UI
+        this.updateUI();
+      }
 
-      setTimeout(() => {
+      updateUI() {
+        this.coinCount.textContent = this.coins;
+      }
+
+      showScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(screen => {
+          screen.classList.remove('active');
+        });
+        document.getElementById(screenId).classList.add('active');
+      }
+
+      validateInput(username, password) {
+        if (!username || username.length < 3) {
+          return "Username must be at least 3 characters.";
+        }
+        if (!password || password.length < 6) {
+          return "Password must be at least 6 characters.";
+        }
+        return "";
+      }
+
+      login() {
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value;
+        const errorDiv = document.getElementById("loginError");
+
+        const error = this.validateInput(username, password);
+        if (error) {
+          errorDiv.textContent = error;
+          return;
+        }
+
+        if (!this.users[username] || this.users[username].password !== password) {
+          errorDiv.textContent = "Invalid username or password.";
+          return;
+        }
+
+        this.playerName.textContent = username;
+        this.coins = this.users[username].coins || 100;
+        this.updateUI();
+        this.showScreen("casinoScreen");
+      }
+
+      register() {
+        const username = document.getElementById("regUsername").value.trim();
+        const password = document.getElementById("regPassword").value;
+        const errorDiv = document.getElementById("registerError");
+
+        const error = this.validateInput(username, password);
+        if (error) {
+          errorDiv.textContent = error;
+          return;
+        }
+
+        if (this.users[username]) {
+          errorDiv.textContent = "Username already exists.";
+          return;
+        }
+
+        this.users[username] = { password, coins: 100 };
+        localStorage.setItem('casinoUsers', JSON.stringify(this.users));
+        this.showScreen("loginScreen");
+      }
+
+      logout() {
+        this.users[this.playerName.textContent].coins = this.coins;
+        localStorage.setItem('casinoUsers', JSON.stringify(this.users));
+        this.showScreen("loginScreen");
+        document.getElementById("username").value = "";
+        document.getElementById("password").value = "";
+      }
+
+      async spin() {
+        if (this.isSpinning) return;
+        if (this.coins < 10) {
+          this.result.textContent = "💸 Not enough coins!";
+          this.loseSound.play();
+          return;
+        }
+
+        this.isSpinning = true;
+        this.coins -= 10;
+        this.updateUI();
+        this.result.textContent = "Spinning...";
+        this.spinSound.play();
+
+        // Animation phase
+        this.slots.forEach(slot => {
+          slot.classList.add("spinning");
+          slot.textContent = this.emojis[Math.floor(Math.random() * this.emojis.length)];
+        });
+
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        // Final symbols
         let symbols = [];
-        slots.forEach(slot => {
-          const symbol = emojis[Math.floor(Math.random() * emojis.length)];
+        this.slots.forEach(slot => {
+          const symbol = this.emojis[Math.floor(Math.random() * this.emojis.length)];
           symbols.push(symbol);
           slot.textContent = symbol;
+          slot.classList.remove("spinning");
         });
 
         // Check for winning rows
         let win = false;
-        for (let i = 0; i < gridSize; i++) {
-          const row = symbols.slice(i * gridSize, i * gridSize + gridSize);
+        for (let i = 0; i < this.gridSize; i++) {
+          const row = symbols.slice(i * this.gridSize, i * this.gridSize + this.gridSize);
           if (row.every(s => s === row[0])) {
             win = true;
-            coins += 50;
-            result.textContent = `🎉 JACKPOT on row ${i + 1}! +50 Coins!`;
+            this.coins += 50;
+            this.result.textContent = `🎉 JACKPOT on row ${i + 1}! +50 Coins!`;
+            this.winSound.play();
             break;
           }
         }
 
         if (!win) {
-          result.textContent = "😢 No match this time.";
+          this.result.textContent = "😢 No match this time.";
+          this.loseSound.play();
         }
 
-        coinCount.textContent = coins;
-      }, 600);
+        this.updateUI();
+        this.isSpinning = false;
+      }
     }
+
+    // Global functions for HTML
+    const game = new CasinoGame();
+
+    function login() { game.login(); }
+    function register() { game.register(); }
+    function showLogin() { game.showScreen("loginScreen"); }
+    function showRegister() { game.showScreen("registerScreen"); }
+    function spin() { game.spin(); }
+    function logout() { game.logout(); }
   </script>
 </body>
 </html>
