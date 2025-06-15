@@ -2,53 +2,54 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>WelcomeSlotCasino899</title>
+  <title>EliteSlotCasino</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
   <style>
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Orbitron', sans-serif;
-      background: radial-gradient(circle at center, #2a2a2a 0%, #000000 100%);
-      color: #ffd700;
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+      color: #e6b800;
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      overflow: hidden;
+      overflow-x: hidden;
     }
 
     .container {
-      max-width: 600px;
-      width: 90%;
-      text-align: center;
-      background: rgba(17, 17, 17, 0.95);
-      border-radius: 25px;
-      padding: 40px;
-      box-shadow: 0 0 30px rgba(255, 215, 0, 0.7);
+      max-width: 900px;
+      width: 95%;
+      background: rgba(20, 20, 20, 0.98);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 0 40px rgba(230, 184, 0, 0.6);
       position: relative;
       transition: transform 0.3s ease;
     }
 
     .container:hover {
-      transform: scale(1.02);
+      transform: scale(1.01);
     }
 
     h1 {
-      font-size: 2.5em;
-      margin: 0 0 15px;
-      text-shadow: 0 0 15px #ffd700;
+      font-size: 2.8em;
+      text-align: center;
+      text-shadow: 0 0 20px #e6b800;
+      margin-bottom: 20px;
     }
 
     h2 {
-      font-size: 1.5em;
-      margin: 0 0 20px;
-      text-shadow: 0 0 10px #ffd700;
+      font-size: 1.6em;
+      text-align: center;
+      text-shadow: 0 0 15px #e6b800;
+      margin-bottom: 15px;
     }
 
     .screen {
@@ -60,6 +61,10 @@
     }
 
     .form-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
       margin: 20px 0;
     }
 
@@ -67,122 +72,180 @@
       padding: 12px;
       font-size: 16px;
       width: 80%;
-      max-width: 300px;
-      margin: 10px 0;
-      border-radius: 8px;
-      border: 2px solid #ffd700;
-      background: #222;
-      color: white;
-      font-family: 'Orbitron', sans-serif;
-      transition: border-color 0.3s ease;
+      max-width: 350px;
+      border-radius: 10px;
+      border: 2px solid #e6b800;
+      background: #2a2a2a;
+      color: #fff;
+      font-family: 'Montserrat', sans-serif;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
 
     input:focus {
       outline: none;
-      border-color: #ff8c00;
+      border-color: #ff6200;
+      box-shadow: 0 0 10px rgba(255, 98, 0, 0.5);
     }
 
     button {
       padding: 12px 30px;
       font-size: 18px;
-      background: linear-gradient(45deg, #ffd700, #ff8c00);
+      background: linear-gradient(45deg, #e6b800, #ff6200);
       color: #000;
       border: none;
       border-radius: 10px;
       cursor: pointer;
-      margin: 10px;
-      font-weight: 700;
-      transition: background 0.3s ease, transform 0.2s ease;
+      font-weight: 800;
+      transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
     }
 
     button:hover {
-      background: linear-gradient(45deg, #ff8c00, #ffd700);
-      transform: translateY(-2px);
+      background: linear-gradient(45deg, #ff6200, #e6b800);
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(230, 184, 0, 0.7);
     }
 
     button:active {
       transform: translateY(0);
     }
 
+    .slot-machine {
+      background: #111;
+      border: 5px solid #e6b800;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 0 30px rgba(230, 184, 0, 0.5);
+      margin: 20px auto;
+    }
+
     .slot-grid {
       display: grid;
-      grid-template-columns: repeat(3, 100px);
-      gap: 15px;
+      grid-template-columns: repeat(5, 100px);
+      gap: 10px;
       justify-content: center;
-      margin: 30px 0;
-      perspective: 1000px;
+      perspective: 1500px;
     }
 
     .reel {
       background: #000;
-      border: 4px solid #ffd700;
-      border-radius: 12px;
+      border: 3px solid #e6b800;
+      border-radius: 10px;
       width: 100px;
       height: 100px;
       font-size: 50px;
       display: flex;
       justify-content: center;
       align-items: center;
-      box-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
-      transition: transform 0.5s ease, box-shadow 0.3s ease;
+      box-shadow: inset 0 0 15px rgba(230, 184, 0, 0.3);
+      transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
       transform-style: preserve-3d;
     }
 
     .reel.spinning {
-      transform: rotateX(360deg);
-      box-shadow: 0 0 25px rgba(255, 215, 0, 1);
+      transform: rotateX(720deg);
+      box-shadow: 0 0 30px rgba(230, 184, 0, 1);
     }
 
-    .host-image {
+    .live-dealer {
       width: 100%;
-      max-width: 400px;
+      max-width: 500px;
       border-radius: 15px;
-      margin-bottom: 20px;
-      box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+      margin: 20px auto;
+      box-shadow: 0 0 25px rgba(230, 184, 0, 0.6);
+      animation: glow 3s infinite ease-in-out;
+    }
+
+    @keyframes glow {
+      0% { box-shadow: 0 0 25px rgba(230, 184, 0, 0.6); }
+      50% { box-shadow: 0 0 40px rgba(230, 184, 0, 1); }
+      100% { box-shadow: 0 0 25px rgba(230, 184, 0, 0.6); }
     }
 
     #result {
-      font-size: 22px;
+      font-size: 24px;
       margin: 20px 0;
       min-height: 30px;
-      text-shadow: 0 0 10px #ffd700;
+      text-shadow: 0 0 15px #e6b800;
+      text-align: center;
     }
 
     #coins {
-      font-size: 20px;
-      margin: 20px 0;
-      background: #222;
-      padding: 10px 25px;
+      font-size: 22px;
+      background: #2a2a2a;
+      padding: 12px 30px;
       border-radius: 12px;
       display: inline-block;
-      border: 2px solid #ffd700;
-      box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+      border: 2px solid #e6b800;
+      box-shadow: 0 0 15px rgba(230, 184, 0, 0.5);
+      margin: 15px 0;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin: 20px 0;
+    }
+
+    .bet-control {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .bet-control select {
+      padding: 8px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 2px solid #e6b800;
+      background: #2a2a2a;
+      color: #fff;
+      cursor: pointer;
     }
 
     .error {
       color: #ff4444;
       font-size: 16px;
-      margin: 10px 0;
+      margin: 15px 0;
+      text-align: center;
     }
 
     .link {
-      color: #ff8c00;
+      color: #ff6200;
       text-decoration: none;
       cursor: pointer;
+      font-weight: 600;
     }
 
     .link:hover {
       text-decoration: underline;
     }
 
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
+    .payout-table {
+      background: #2a2a2a;
+      border: 2px solid #e6b800;
+      border-radius: 10px;
+      padding: 15px;
+      margin: 20px auto;
+      max-width: 600px;
+      text-align: left;
+      font-size: 16px;
     }
 
-    .pulse {
-      animation: pulse 2s infinite;
+    .payout-table h3 {
+      text-align: center;
+      margin-bottom: 15px;
+      text-shadow: 0 0 10px #e6b800;
+    }
+
+    .payout-table ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .payout-table li {
+      margin: 10px 0;
     }
   </style>
 </head>
@@ -190,8 +253,8 @@
   <div class="container">
     <!-- Login Screen -->
     <div id="loginScreen" class="screen active">
-      <h1>🎰 WelcomeSlotCasino899</h1>
-      <h2>Login to Your Account</h2>
+      <h1>🎰 EliteSlotCasino</h1>
+      <h2>Enter the VIP Lounge</h2>
       <div class="form-group">
         <input type="text" id="username" placeholder="Username" />
         <input type="password" id="password" placeholder="Password" />
@@ -199,13 +262,13 @@
         <button onclick="login()">Login</button>
         <button onclick="showRegister()">Register</button>
       </div>
-      <p>Not a member? <a class="link" onclick="showRegister()">Create an account</a></p>
+      <p>Not a VIP? <a class="link" onclick="showRegister()">Join the Casino</a></p>
     </div>
 
     <!-- Register Screen -->
     <div id="registerScreen" class="screen">
-      <h1>🎰 WelcomeSlotCasino899</h1>
-      <h2>Create Your Account</h2>
+      <h1>🎰 EliteSlotCasino</h1>
+      <h2>Become a VIP</h2>
       <div class="form-group">
         <input type="text" id="regUsername" placeholder="Choose Username" />
         <input type="password" id="regPassword" placeholder="Choose Password" />
@@ -213,39 +276,68 @@
         <button onclick="register()">Register</button>
         <button onclick="showLogin()">Back to Login</button>
       </div>
-      <p>Already have an account? <a class="link" onclick="showLogin()">Login here</a></p>
+      <p>Already a VIP? <a class="link" onclick="showLogin()">Login here</a></p>
     </div>
 
     <!-- Game Screen -->
     <div id="casinoScreen" class="screen">
-      <h1>🏆 WelcomeSlotCasino899</h1>
-      <h2>🎰 Hello, <span id="playerName"></span>!</h2>
-      <img src="https://i.imgur.com/hVqKwBR.png" alt="Host" class="host-image pulse" />
-      <div id="coins">💰 Coins: <span id="coinCount">100</span></div>
+      <h1>🏆 EliteSlotCasino</h1>
+      <h2>🎰 Welcome, <span id="playerName"></span>!</h2>
+      <img src="https://images.unsplash.com/photo-1599447352167-a37d86f9ab03?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Live Dealer" class="live-dealer" />
+      <div id="coins">💰 Coins: <span id="coinCount">1000</span></div>
 
-      <div class="slot-grid" id="slotGrid"></div>
+      <div class="slot-machine">
+        <div class="slot-grid" id="slotGrid"></div>
+      </div>
 
-      <button onclick="spin()">🎲 Spin (10 Coins)</button>
+      <div class="payout-table">
+        <h3>Payout Table</h3>
+        <ul>
+          <li>5 x 💎: 100x Bet</li>
+          <li>5 x 7️⃣: 50x Bet</li>
+          <li>5 x 🔔: 30x Bet</li>
+          <li>5 x Any Fruit: 20x Bet</li>
+          <li>4 x Any Symbol: 10x Bet</li>
+          <li>3 x Any Symbol: 5x Bet</li>
+        </ul>
+      </div>
+
+      <div class="controls">
+        <div class="bet-control">
+          <label for="betAmount">Bet:</label>
+          <select id="betAmount">
+            <option value="10">10 Coins</option>
+            <option value="20">20 Coins</option>
+            <option value="50">50 Coins</option>
+            <option value="100">100 Coins</option>
+          </select>
+        </div>
+        <button onclick="spin()">🎰 Spin</button>
+        <button onclick="autoSpin()">🔄 Auto Spin</button>
+        <button onclick="logout()">🚪 Logout</button>
+      </div>
       <div id="result"></div>
-      <button onclick="logout()">Logout</button>
     </div>
   </div>
 
   <script>
-    class CasinoGame {
+    class EliteSlotCasino {
       constructor() {
-        this.coins = 100;
-        this.emojis = ["🍒", "🍋", "🍇", "🔔", "7️⃣", "🍉", "💎", "🍀", "🎲"];
-        this.gridSize = 3;
+        this.coins = 1000;
+        this.emojis = ["🍒", "🍋", "🍇", "🔔", "7️⃣", "🍉", "💎", "🍀", "🎰"];
+        this.gridSize = { rows: 3, cols: 5 };
         this.slots = [];
         this.isSpinning = false;
+        this.autoSpinInterval = null;
         this.users = JSON.parse(localStorage.getItem('casinoUsers')) || {};
+        this.betAmount = 10;
 
         // DOM Elements
         this.slotGrid = document.getElementById("slotGrid");
         this.coinCount = document.getElementById("coinCount");
         this.result = document.getElementById("result");
         this.playerName = document.getElementById("playerName");
+        this.betSelect = document.getElementById("betAmount");
 
         // Audio
         this.spinSound = new Audio('https://freesound.org/data/previews/184/184438_2394238-lq.mp3');
@@ -257,7 +349,7 @@
 
       init() {
         // Initialize slot grid
-        for (let i = 0; i < this.gridSize * this.gridSize; i++) {
+        for (let i = 0; i < this.gridSize.rows * this.gridSize.cols; i++) {
           const reel = document.createElement("div");
           reel.className = "reel";
           reel.textContent = "❓";
@@ -265,7 +357,11 @@
           this.slots.push(reel);
         }
 
-        // Update UI
+        // Event listeners
+        this.betSelect.addEventListener('change', (e) => {
+          this.betAmount = parseInt(e.target.value);
+        });
+
         this.updateUI();
       }
 
@@ -281,11 +377,11 @@
       }
 
       validateInput(username, password) {
-        if (!username || username.length < 3) {
-          return "Username must be at least 3 characters.";
+        if (!username || username.length < 4) {
+          return "Username must be at least 4 characters.";
         }
-        if (!password || password.length < 6) {
-          return "Password must be at least 6 characters.";
+        if (!password || password.length < 8) {
+          return "Password must be at least 8 characters.";
         }
         return "";
       }
@@ -307,7 +403,7 @@
         }
 
         this.playerName.textContent = username;
-        this.coins = this.users[username].coins || 100;
+        this.coins = this.users[username].coins || 1000;
         this.updateUI();
         this.showScreen("casinoScreen");
       }
@@ -328,7 +424,7 @@
           return;
         }
 
-        this.users[username] = { password, coins: 100 };
+        this.users[username] = { password, coins: 1000 };
         localStorage.setItem('casinoUsers', JSON.stringify(this.users));
         this.showScreen("loginScreen");
       }
@@ -336,6 +432,7 @@
       logout() {
         this.users[this.playerName.textContent].coins = this.coins;
         localStorage.setItem('casinoUsers', JSON.stringify(this.users));
+        this.stopAutoSpin();
         this.showScreen("loginScreen");
         document.getElementById("username").value = "";
         document.getElementById("password").value = "";
@@ -343,14 +440,14 @@
 
       async spin() {
         if (this.isSpinning) return;
-        if (this.coins < 10) {
-          this.result.textContent = "💸 Not enough coins!";
+        if (this.coins < this.betAmount) {
+          this.result.textContent = "💸 Insufficient coins!";
           this.loseSound.play();
           return;
         }
 
         this.isSpinning = true;
-        this.coins -= 10;
+        this.coins -= this.betAmount;
         this.updateUI();
         this.result.textContent = "Spinning...";
         this.spinSound.play();
@@ -361,7 +458,7 @@
           slot.textContent = this.emojis[Math.floor(Math.random() * this.emojis.length)];
         });
 
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 1500));
 
         // Final symbols
         let symbols = [];
@@ -372,37 +469,79 @@
           slot.classList.remove("spinning");
         });
 
-        // Check for winning rows
-        let win = false;
-        for (let i = 0; i < this.gridSize; i++) {
-          const row = symbols.slice(i * this.gridSize, i * this.gridSize + this.gridSize);
-          if (row.every(s => s === row[0])) {
-            win = true;
-            this.coins += 50;
-            this.result.textContent = `🎉 JACKPOT on row ${i + 1}! +50 Coins!`;
-            this.winSound.play();
-            break;
+        // Check for wins
+        let totalWin = 0;
+        const payouts = {
+          '💎': 100,
+          '7️⃣': 50,
+          '🔔': 30,
+          '🍒': 20,
+          '🍋': 20,
+          '🍇': 20,
+          '🍉': 20,
+          '🍀': 20,
+          '🎰': 20
+        };
+
+        for (let row = 0; row < this.gridSize.rows; row++) {
+          const rowSymbols = symbols.slice(row * this.gridSize.cols, (row + 1) * this.gridSize.cols);
+          const counts = {};
+          rowSymbols.forEach(s => counts[s] = (counts[s] || 0) + 1);
+
+          for (const [symbol, count] of Object.entries(counts)) {
+            if (count >= 3) {
+              let multiplier = count === 5 ? payouts[symbol] : count === 4 ? 10 : 5;
+              totalWin += this.betAmount * multiplier;
+              this.result.textContent = `🎉 Win on row ${row + 1}! +${this.betAmount * multiplier} Coins!`;
+            }
           }
         }
 
-        if (!win) {
-          this.result.textContent = "😢 No match this time.";
+        if (totalWin > 0) {
+          this.coins += totalWin;
+          this.winSound.play();
+        } else {
+          this.result.textContent = "😢 Try again!";
           this.loseSound.play();
         }
 
         this.updateUI();
         this.isSpinning = false;
       }
+
+      autoSpin() {
+        if (this.autoSpinInterval) {
+          this.stopAutoSpin();
+        } else {
+          this.autoSpinInterval = setInterval(async () => {
+            if (!this.isSpinning && this.coins >= this.betAmount) {
+              await this.spin();
+            } else {
+              this.stopAutoSpin();
+            }
+          }, 2000);
+          document.querySelector('button[onclick="autoSpin()"]').textContent = "⏹ Stop Auto";
+        }
+      }
+
+      stopAutoSpin() {
+        if (this.autoSpinInterval) {
+          clearInterval(this.autoSpinInterval);
+          this.autoSpinInterval = null;
+          document.querySelector('button[onclick="autoSpin()"]').textContent = "🔄 Auto Spin";
+        }
+      }
     }
 
     // Global functions for HTML
-    const game = new CasinoGame();
+    const game = new EliteSlotCasino();
 
     function login() { game.login(); }
     function register() { game.register(); }
     function showLogin() { game.showScreen("loginScreen"); }
     function showRegister() { game.showScreen("registerScreen"); }
     function spin() { game.spin(); }
+    function autoSpin() { game.autoSpin(); }
     function logout() { game.logout(); }
   </script>
 </body>
