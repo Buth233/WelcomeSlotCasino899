@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>WelcomeSlotCasino899</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: radial-gradient(#0b0c10, #1f2833);
+      color: gold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .screen {
+      display: none;
+      background-color: #222;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px gold;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    input[type="text"] {
+      padding: 12px;
+      font-size: 16px;
+      width: 80%;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      border: none;
+    }
+
+    button {
+      padding: 12px 24px;
+      font-size: 16px;
+      background-color: gold;
+      color: black;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: orange;
+    }
+
+    .reels {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+    }
+
+    .reel {
+      background: #000;
+      border: 2px solid #fff;
+      border-radius: 8px;
+      width: 60px;
+      height: 60px;
+      margin: 0 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 40px;
+    }
+
+    #host {
+      margin-bottom: 10px;
+    }
+
+    #result {
+      margin-top: 15px;
+      font-size: 18px;
+    }
+
+    #coins {
+      margin: 10px 0;
+    }
+
+    .host-image {
+      width: 100%;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+
+    h1 {
+      margin-bottom: 5px;
+      text-shadow: 0 0 5px gold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Login Screen -->
+    <div id="loginScreen" class="screen active">
+      <h2>🎮 Welcome to WelcomeSlotCasino899</h2>
+      <input type="text" id="username" placeholder="Enter your name" />
+      <br />
+      <button onclick="login()">Login</button>
+    </div>
+
+    <!-- Casino Screen -->
+    <div id="casinoScreen" class="screen">
+      <h1>🏆 WelcomeSlotCasino899</h1>
+      <h2>🎰 Welcome, <span id="playerName"></span>!</h2>
+      <img src="https://i.imgur.com/hVqKwBR.png" alt="Casino Host" class="host-image" />
+      <div id="coins">💰 Coins: <span id="coinCount">100</span></div>
+
+      <div class="reels">
+        <div class="reel" id="r1">❓</div>
+        <div class="reel" id="r2">❓</div>
+        <div class="reel" id="r3">❓</div>
+      </div>
+
+      <button onclick="spin()">🎲 Spin (10 Coins)</button>
+      <div id="result"></div>
+    </div>
+  </div>
+
+  <script>
+    let coins = 100;
+    const emojis = ["🍒", "🍋", "🍇", "🔔", "7️⃣", "🍉"];
+
+    const r1 = document.getElementById("r1");
+    const r2 = document.getElementById("r2");
+    const r3 = document.getElementById("r3");
+    const result = document.getElementById("result");
+    const coinCount = document.getElementById("coinCount");
+
+    function login() {
+      const name = document.getElementById("username").value.trim();
+      if (name === "") {
+        alert("Please enter your name.");
+        return;
+      }
+
+      document.getElementById("playerName").textContent = name;
+      document.getElementById("loginScreen").classList.remove("active");
+      document.getElementById("casinoScreen").classList.add("active");
+    }
+
+    function spin() {
+      if (coins < 10) {
+        result.textContent = "💸 Not enough coins!";
+        return;
+      }
+
+      coins -= 10;
+      coinCount.textContent = coins;
+
+      const slot1 = emojis[Math.floor(Math.random() * emojis.length)];
+      const slot2 = emojis[Math.floor(Math.random() * emojis.length)];
+      const slot3 = emojis[Math.floor(Math.random() * emojis.length)];
+
+      r1.textContent = "🎲";
+      r2.textContent = "🎲";
+      r3.textContent = "🎲";
+      result.textContent = "";
+
+      setTimeout(() => {
+        r1.textContent = slot1;
+        r2.textContent = slot2;
+        r3.textContent = slot3;
+
+        if (slot1 === slot2 && slot2 === slot3) {
+          coins += 50;
+          result.textContent = "🎉 JACKPOT! +50 Coins!";
+        } else if (slot1 === slot2 || slot2 === slot3 || slot1 === slot3) {
+          coins += 20;
+          result.textContent = "✨ Nice! +20 Coins!";
+        } else {
+          result.textContent = "😢 No match!";
+        }
+
+        coinCount.textContent = coins;
+      }, 800);
+    }
+  </script>
+</body>
+</html>
