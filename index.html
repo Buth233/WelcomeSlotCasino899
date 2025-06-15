@@ -152,30 +152,49 @@
       max-width: 90%;
       max-height: 90%;
       object-fit: contain;
-      transition: opacity 0.3s ease, filter 0.3s ease;
+      transition: opacity 0.3s ease, filter 0.3s ease, transform 0.3s ease;
     }
 
     .reel.spinning img {
-      opacity: 0.3;
+      filter: blur(3px); /* Blur effect during spin */
+      animation: pulse 0.5s ease-in-out infinite; /* Pulse effect during spin */
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
     }
 
     .reel.losing img {
+      animation: shake 0.3s ease-in-out; /* Shake effect on loss */
       filter: brightness(0.5);
-      transition: filter 0.5s ease;
+    }
+
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-3px); }
+      50% { transform: translateX(3px); }
+      75% { transform: translateX(-3px); }
+      100% { transform: translateX(0); }
+    }
+
+    .reel.winning img {
+      animation: shine 0.5s ease-in-out 3; /* Shine effect on win */
+      filter: brightness(1.2);
+    }
+
+    @keyframes shine {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.15); filter: brightness(1.5); }
+      100% { transform: scale(1); }
     }
 
     .reel.winning {
-      animation: flash 0.5s ease-in-out 3;
       border: 3px solid #ff6200;
       box-shadow: 0 0 20px #ff6200;
     }
 
-    @keyframes flash {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.05); opacity: 0.8; }
-    }
-
-    /* Added: Effect above reels */
     .reel-effect {
       position: absolute;
       top: -30px;
@@ -517,7 +536,7 @@
         });
         document.querySelectorAll('.coin-effect, .sparkle-effect, .win-banner').forEach(el => el.remove());
 
-        // Add spinning effect above each reel
+        // Add spinning effect above each reel and animate images
         this.slots.forEach(slot => {
           const effect = document.createElement("div");
           effect.className = "reel-effect spin-effect";
