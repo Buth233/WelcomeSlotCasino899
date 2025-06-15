@@ -14,9 +14,10 @@
 
     body {
       font-family: 'Montserrat', sans-serif;
-      /* Updated: GIF background */
-      background: url('https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExa3ozZ2R2Mjhpc3lrOWhsbHV4cjFvcjJ5bmExbzA4ZHUyemNic3VlMCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/1lQkbm9D1G0xnSBwPd/giphy.gif') no-repeat center center fixed;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2e2e2e 100%), 
+                  url('https://images.unsplash.com/photo-1599447352167-a37d86f9ab03?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') no-repeat center center fixed;
       background-size: cover;
+      background-blend-mode: overlay;
       color: #e6b800;
       min-height: 100vh;
       display: flex;
@@ -24,13 +25,6 @@
       align-items: center;
       overflow-x: hidden;
       position: relative;
-      /* Ensure GIF loops seamlessly */
-      animation: backgroundLoop 0.1s step-end infinite;
-    }
-
-    @keyframes backgroundLoop {
-      0% { background-position: center center; }
-      100% { background-position: center center; }
     }
 
     body::before {
@@ -40,7 +34,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.5); /* Slightly darker overlay for GIF contrast */
+      background: rgba(0, 0, 0, 0.6); /* Darker overlay for contrast */
       z-index: -1;
     }
 
@@ -398,13 +392,13 @@
       margin: 20px 0;
     }
 
-    .bet-control {
+    .bet-control, .difficulty-control {
       display: flex;
       align-items: center;
       gap: 10px;
     }
 
-    .bet-control select {
+    .bet-control select, .difficulty-control select {
       padding: 8px;
       font-size: 16px;
       border-radius: 8px;
@@ -467,6 +461,14 @@
             <option value="100">100 Coins</option>
           </select>
         </div>
+        <div class="difficulty-control">
+          <label for="difficulty">Difficulty:</label>
+          <select id="difficulty">
+            <option value="easy">Easy</option>
+            <option value="normal" selected>Normal</option>
+            <option value="hard">Hard</option>
+          </select>
+        </div>
         <button onclick="spin()">🎰 Spin</button>
         <button onclick="autoSpin()">🔄 Auto Spin</button>
         <button onclick="logout()">🚪 Logout</button>
@@ -496,6 +498,7 @@
         this.autoSpinInterval = null;
         this.users = JSON.parse(localStorage.getItem('casinoUsers')) || {};
         this.betAmount = 10;
+        this.difficulty = 'normal';
 
         // DOM Elements
         this.slotGrid = document.getElementById("slotGrid");
@@ -503,6 +506,7 @@
         this.result = document.getElementById("result");
         this.playerName = document.getElementById("playerName");
         this.betSelect = document.getElementById("betAmount");
+        this.difficultySelect = document.getElementById("difficulty");
 
         // Audio
         this.spinSound = new Audio('https://freesound.org/data/previews/184/184438_2394238-lq.mp3');
@@ -528,6 +532,11 @@
 
         this.betSelect.addEventListener('change', (e) => {
           this.betAmount = parseInt(e.target.value);
+        });
+
+        this.difficultySelect.addEventListener('change', (e) => {
+          this.difficulty = e.target.value;
+          this.result.textContent = `Difficulty set to: ${this.difficulty.charAt(0).toUpperCase() + this.difficulty.slice(1)}`;
         });
 
         this.updateUI();
@@ -580,6 +589,18 @@
         document.getElementById("username").value = "";
       }
 
+      getDifficultySettings() {
+        switch (this.difficulty) {
+          case 'easy':
+            return { winProbability: 0.5, payoutMultiplier: 1.5 };
+          case 'hard':
+            return { winProbability: 0.15, payoutMultiplier: 0.5 };
+          case 'normal':
+          default:
+            return { winProbability: 0.3, payoutMultiplier: 1 };
+        }
+      }
+
       async spin() {
         if (this.isSpinning) return;
         if (this.coins < this.betAmount) {
@@ -617,19 +638,18 @@
         // Fast spin duration (1.5 seconds)
         await new Promise(resolve => setTimeout(resolve, 1500));
 
-        // Final symbols with ~30% win chance per row
+        // Final symbols with dynamic win chance
+        const { winProbability } = this.getDifficultySettings();
         let symbols = [];
         for (let row = 0; row < this.gridSize.rows; row++) {
           const rowSymbols = [];
-          // 30% chance for a winning row (3-5 matches)
-          if (Math.random() < 0.3) {
+          if (Math.random() < winProbability) {
             const symbol = this.emojis[Math.floor(Math.random() * this.emojis.length)];
             const matchCount = Math.floor(Math.random() * 3) + 3; // 3, 4, or 5
             for (let col = 0; col < this.gridSize.cols; col++) {
               rowSymbols.push(col < matchCount ? symbol : this.emojis[Math.floor(Math.random() * this.emojis.length)]);
             }
           } else {
-            // Random symbols
             for (let col = 0; col < this.gridSize.cols; col++) {
               rowSymbols.push(this.emojis[Math.floor(Math.random() * this.emojis.length)]);
             }
@@ -648,7 +668,7 @@
 
         // Check for wins
         let totalWin = 0;
-        const payouts = {
+        const basePayouts = {
           'https://i.imgur.com/RuJ1PRM.png': 100,   // diamond.png
           'https://i.imgur.com/kuzdcPD.png': 50,    // 7.png
           'https://i.imgur.com/tqS8x2D.png': 30,    // bell.png
@@ -659,6 +679,7 @@
           'https://i.imgur.com/l9MJKUr.png': 20,    // clover.png
           'https://i.imgur.com/4KJavXE.png': 20     // slot.png
         };
+        const { payoutMultiplier } = this.getDifficultySettings();
         let winningRows = [];
 
         for (let row = 0; row < this.gridSize.rows; row++) {
@@ -677,8 +698,8 @@
           }
 
           if (matchCount >= 3) {
-            let multiplier = matchCount === 5 ? payouts[currentSymbol] : matchCount === 4 ? 10 : 5;
-            let winAmount = this.betAmount * multiplier;
+            let multiplier = matchCount === 5 ? basePayouts[currentSymbol] : matchCount === 4 ? 10 : 5;
+            let winAmount = Math.round(this.betAmount * multiplier * payoutMultiplier);
             totalWin += winAmount;
             winningRows.push({ row: row + 1, count: matchCount, amount: winAmount, indices: winningIndices });
           }
@@ -728,12 +749,11 @@
         const ruler = document.createElement("div");
         ruler.className = "win-ruler";
 
-        // Calculate dimensions
-        const rowHeight = 100; // Reel height
-        const gap = 10; // Gap between reels
-        const padding = 20; // Slot machine padding
+        const rowHeight = 100;
+        const gap = 10;
+        const padding = 20;
         const svgWidth = (matchCount * 100) + ((matchCount - 1) * gap);
-        const svgHeight = 60; // Height for graph
+        const svgHeight = 60;
         const topPosition = padding + row * (rowHeight + gap) + (rowHeight / 2) - (svgHeight / 2);
 
         ruler.style.top = `${topPosition}px`;
@@ -741,12 +761,10 @@
         ruler.style.width = `${svgWidth}px`;
         ruler.style.height = `${svgHeight}px`;
 
-        // Create SVG
         const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         svg.setAttribute("width", svgWidth);
         svg.setAttribute("height", svgHeight);
 
-        // Add grid lines (horizontal)
         for (let y = 15; y < svgHeight; y += 15) {
           const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
           line.setAttribute("x1", 0);
@@ -757,14 +775,12 @@
           svg.appendChild(line);
         }
 
-        // Generate points for graph
         const points = [];
         const stepWidth = svgWidth / (matchCount - 1);
         for (let i = 0; i < matchCount; i++) {
           const x = i * stepWidth;
-          const y = 20 + Math.random() * (svgHeight - 40); // Random Y for jagged effect
+          const y = 20 + Math.random() * (svgHeight - 40);
           points.push(`${x},${y}`);
-          // Add data point
           const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
           circle.setAttribute("cx", x);
           circle.setAttribute("cy", y);
@@ -774,7 +790,6 @@
           svg.appendChild(circle);
         }
 
-        // Create polyline for graph
         const polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
         polyline.setAttribute("points", points.join(" "));
         polyline.setAttribute("class", "graph-line");
