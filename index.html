@@ -140,6 +140,7 @@
       transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
       transform-style: preserve-3d;
       overflow: hidden;
+      position: relative; /* Added for win highlight */
     }
 
     .reel.spinning {
@@ -151,11 +152,89 @@
       max-width: 90%;
       max-height: 90%;
       object-fit: contain;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.3s ease, filter 0.3s ease; /* Added filter for loss effect */
     }
 
     .reel.spinning img {
       opacity: 0.5;
+    }
+
+    /* Added: Dimming effect for non-winning symbols */
+    .reel.losing img {
+      filter: brightness(0.5);
+      transition: filter 0.5s ease;
+    }
+
+    /* Added: Highlight for winning reels */
+    .reel.winning {
+      animation: shake 0.5s ease-in-out 2;
+      border: 3px solid #ff6200;
+      box-shadow: 0 0 20px #ff6200;
+    }
+
+    /* Added: Shake animation for winning reels */
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+      100% { transform: translateX(0); }
+    }
+
+    /* Added: Coin flying animation */
+    .coin-effect {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      background: url('https://i.imgur.com/RuJ1PRM.png') center/cover;
+      animation: flyCoin 1.5s ease-out forwards;
+      z-index: 10;
+    }
+
+    @keyframes flyCoin {
+      0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
+      100% { transform: translate(-50%, -300px) scale(1.5); opacity: 0; }
+    }
+
+    /* Added: Sparkle effect */
+    .sparkle-effect {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: radial-gradient(circle, #fff 10%, transparent 70%);
+      animation: sparkle 1s ease-out forwards;
+      z-index: 10;
+    }
+
+    @keyframes sparkle {
+      0% { transform: scale(0); opacity: 1; }
+      50% { transform: scale(1.5); opacity: 0.8; }
+      100% { transform: scale(0); opacity: 0; }
+    }
+
+    /* Added: Win banners */
+    .win-banner {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 48px;
+      font-weight: 800;
+      color: #fff;
+      text-shadow: 0 0 20px #e6b800, 0 0 30px #ff6200;
+      opacity: 0;
+      animation: winBanner 2s ease-out forwards;
+      z-index: 20;
+    }
+
+    .big-win { background: linear-gradient(45deg, #e6b800, #ff6200); padding: 10px 20px; border-radius: 10px; }
+    .mega-win { background: linear-gradient(45deg, #ff6200, #ff0000); padding: 15px 30px; border-radius: 12px; }
+    .super-win { background: linear-gradient(45deg, #ff0000, #ff00ff); padding: 20px 40px; border-radius: 15px; }
+
+    @keyframes winBanner {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
+      50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+      100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
     }
 
     .live-dealer {
@@ -316,7 +395,7 @@
           <li>5 x slot.png: 20x Bet</li>
           <li>4 x Any Symbol: 10x Bet</li>
           <li>3 x Any Symbol: 5x Bet</li>
-          <li><strong>Rules:</strong> Match 3 or more symbols in a row to win. Higher matches increase payout. Spin costs your selected bet amount.</li>
+          <li><strong>Rules:</strong> Match 3 or more consecutive symbols in a row (left to right) to win. Higher matches increase payout. Spin costs your selected bet amount.</li>
         </ul>
       </div>
 
@@ -371,6 +450,7 @@
         this.spinSound = new Audio('https://freesound.org/data/previews/184/184438_2394238-lq.mp3');
         this.winSound = new Audio('https://freesound.org/data/previews/387/387739_4068518-lq.mp3');
         this.loseSound = new Audio('https://freesound.org/data/previews/198/198841_3665592-lq.mp3');
+        this.loseSound.volume = 0.3; // Subtle volume for loss sound
 
         this.init();
       }
@@ -381,8 +461,8 @@
           const reel = document.createElement("div");
           reel.className = "reel";
           const img = document.createElement("img");
-          img.src = this.emojis[Math.floor(Math.random() * this.emojis.length)]; // Random initial image
-          img.alt = ""; // No alt text to avoid fallback display
+          img.src = this.emojis[Math.floor(Math.random() * this.emojis.length)];
+          img.alt = "";
           img.onerror = () => console.error(`Image failed to load: ${img.src}`);
           reel.appendChild(img);
           this.slotGrid.appendChild(reel);
@@ -458,6 +538,10 @@
         this.result.textContent = "Spinning...";
         this.spinSound.play();
 
+        // Clear previous effects
+        this.slots.forEach(slot => slot.classList.remove('winning', 'losing'));
+        document.querySelectorAll('.coin-effect, .sparkle-effect, .win-banner').forEach(el => el.remove());
+
         // Sequential spinning animation for realism
         for (let i = 0; i < this.slots.length; i++) {
           const slot = this.slots[i];
@@ -465,10 +549,10 @@
           img.src = this.emojis[Math.floor(Math.random() * this.emojis.length)];
           img.onerror = () => console.error(`Image failed to load during spin: ${img.src}`);
           slot.classList.add("spinning");
-          await new Promise(resolve => setTimeout(resolve, i * 200)); // Staggered start
+          await new Promise(resolve => setTimeout(resolve, i * 200));
         }
 
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Total spin duration
+        await new Promise(resolve => setTimeout(resolve, 1000));
 
         // Final symbols
         let symbols = [];
@@ -481,7 +565,7 @@
           slot.classList.remove("spinning");
         });
 
-        // Check for wins
+        // Check for wins (consecutive symbols in a row)
         let totalWin = 0;
         const payouts = {
           'https://i.imgur.com/RuJ1PRM.png': 100,   // diamond.png
@@ -494,27 +578,50 @@
           'https://i.imgur.com/l9MJKUr.png': 20,    // clover.png
           'https://i.imgur.com/4KJavXE.png': 20     // slot.png
         };
+        let winningRows = [];
 
         for (let row = 0; row < this.gridSize.rows; row++) {
           const rowSymbols = symbols.slice(row * this.gridSize.cols, (row + 1) * this.gridSize.cols);
-          const counts = {};
-          rowSymbols.forEach(s => counts[s] = (counts[s] || 0) + 1);
+          let matchCount = 1;
+          let currentSymbol = rowSymbols[0];
+          let winningIndices = [row * this.gridSize.cols];
 
-          for (const [symbol, count] of Object.entries(counts)) {
-            if (count >= 3) {
-              let multiplier = count === 5 ? payouts[symbol] : count === 4 ? 10 : 5;
-              totalWin += this.betAmount * multiplier;
-              this.result.textContent = `🎉 Win on row ${row + 1}! +${this.betAmount * multiplier} Coins!`;
-              this.showWinEffect(); // Trigger win animation
+          // Check for consecutive matches from left to right
+          for (let col = 1; col < this.gridSize.cols; col++) {
+            if (rowSymbols[col] === currentSymbol) {
+              matchCount++;
+              winningIndices.push(row * this.gridSize.cols + col);
+            } else {
+              break; // Stop at first non-matching symbol
             }
+          }
+
+          if (matchCount >= 3) {
+            let multiplier = matchCount === 5 ? payouts[currentSymbol] : matchCount === 4 ? 10 : 5;
+            let winAmount = this.betAmount * multiplier;
+            totalWin += winAmount;
+            winningRows.push({ row: row + 1, count: matchCount, amount: winAmount, indices: winningIndices });
           }
         }
 
         if (totalWin > 0) {
+          // Apply win effects
+          winningRows.forEach(({ row, count, amount, indices }) => {
+            this.result.textContent = `🎉 Win on row ${row}! +${amount} Coins!`;
+            indices.forEach(index => {
+              this.slots[index].classList.add('winning');
+            });
+            this.showWinEffect(count);
+          });
           this.coins += totalWin;
           this.winSound.play();
+          // Add coin and sparkle effects
+          this.addCoinEffects();
+          this.addSparkleEffects();
         } else {
+          // Apply loss effect
           this.result.textContent = "😢 Try again!";
+          this.slots.forEach(slot => slot.classList.add('losing'));
           this.loseSound.play();
         }
 
@@ -522,13 +629,44 @@
         this.isSpinning = false;
       }
 
-      showWinEffect() {
+      showWinEffect(matchCount) {
         const resultDiv = document.getElementById("result");
         const effect = document.createElement("div");
         effect.className = "win-effect";
-        effect.textContent = "🎉💰🔔"; // Celebratory emojis
+        effect.textContent = "🎉💰🔔";
         resultDiv.appendChild(effect);
-        setTimeout(() => effect.remove(), 1500); // Remove after animation
+        setTimeout(() => effect.remove(), 1500);
+
+        // Add win banner based on match count
+        const banner = document.createElement("div");
+        banner.className = `win-banner ${matchCount === 5 ? 'super-win' : matchCount === 4 ? 'mega-win' : 'big-win'}`;
+        banner.textContent = matchCount === 5 ? "SUPER WIN!" : matchCount === 4 ? "MEGA WIN!" : "BIG WIN!";
+        resultDiv.appendChild(banner);
+        setTimeout(() => banner.remove(), 2000);
+      }
+
+      addCoinEffects() {
+        const slotMachine = document.querySelector('.slot-machine');
+        for (let i = 0; i < 10; i++) {
+          const coin = document.createElement("div");
+          coin.className = "coin-effect";
+          coin.style.left = `${Math.random() * 100}%`;
+          coin.style.top = `${Math.random() * 100}%`;
+          slotMachine.appendChild(coin);
+          setTimeout(() => coin.remove(), 1500);
+        }
+      }
+
+      addSparkleEffects() {
+        const slotMachine = document.querySelector('.slot-machine');
+        for (let i = 0; i < 8; i++) {
+          const sparkle = document.createElement("div");
+          sparkle.className = "sparkle-effect";
+          sparkle.style.left = `${Math.random() * 100}%`;
+          sparkle.style.top = `${Math.random() * 100}%`;
+          slotMachine.appendChild(sparkle);
+          setTimeout(() => sparkle.remove(), 1000);
+        }
       }
 
       autoSpin() {
@@ -541,7 +679,7 @@
             } else {
               this.stopAutoSpin();
             }
-          }, 2000);
+          }, 2500); // Slightly longer interval for realism
           document.querySelector('button[onclick="autoSpin()"]').textContent = "⏹ Stop Auto";
         }
       }
@@ -559,7 +697,6 @@
     const game = new EliteSlotCasino();
 
     function login() { game.login(); }
-    function showLogin() { game.showScreen("loginScreen"); }
     function spin() { game.spin(); }
     function autoSpin() { game.autoSpin(); }
     function logout() { game.logout(); }
