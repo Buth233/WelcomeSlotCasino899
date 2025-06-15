@@ -400,12 +400,12 @@
       }
 
       init() {
-        // Initialize slot grid
+        // Initialize slot grid with a default image
         for (let i = 0; i < this.gridSize.rows * this.gridSize.cols; i++) {
           const reel = document.createElement("div");
           reel.className = "reel";
           const img = document.createElement("img");
-          img.src = "❓"; // Placeholder during init
+          img.src = this.emojis[0]; // Use the first image as a default
           img.alt = "Slot Symbol";
           reel.appendChild(img);
           this.slotGrid.appendChild(reel);
