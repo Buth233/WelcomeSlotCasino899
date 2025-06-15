@@ -152,18 +152,29 @@
       border-radius: 10px;
       width: 100px;
       height: 100px;
-      font-size: 50px;
       display: flex;
       justify-content: center;
       align-items: center;
       box-shadow: inset 0 0 15px rgba(230, 184, 0, 0.3);
       transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
       transform-style: preserve-3d;
+      overflow: hidden;
     }
 
     .reel.spinning {
       transform: rotateX(720deg);
       box-shadow: 0 0 30px rgba(230, 184, 0, 1);
+    }
+
+    .reel img {
+      max-width: 90%;
+      max-height: 90%;
+      object-fit: contain;
+      transition: opacity 0.3s ease;
+    }
+
+    .reel.spinning img {
+      opacity: 0.5;
     }
 
     .live-dealer {
@@ -319,10 +330,15 @@
       <div class="payout-table">
         <h3>Payout Table</h3>
         <ul>
-          <li>5 x 💎: 100x Bet</li>
-          <li>5 x 7️⃣: 50x Bet</li>
-          <li>5 x 🔔: 30x Bet</li>
-          <li>5 x Any Fruit: 20x Bet</li>
+          <li>5 x diamond.png: 100x Bet</li>
+          <li>5 x 7.png: 50x Bet</li>
+          <li>5 x bell.png: 30x Bet</li>
+          <li>5 x cherry.png: 20x Bet</li>
+          <li>5 x lemon.png: 20x Bet</li>
+          <li>5 x grapes.png: 20x Bet</li>
+          <li>5 x watermelon.png: 20x Bet</li>
+          <li>5 x clover.png: 20x Bet</li>
+          <li>5 x slot.png: 20x Bet</li>
           <li>4 x Any Symbol: 10x Bet</li>
           <li>3 x Any Symbol: 5x Bet</li>
         </ul>
@@ -350,7 +366,17 @@
     class EliteSlotCasino {
       constructor() {
         this.coins = 1000;
-        this.emojis = ["🍒", "🍋", "🍇", "🔔", "7️⃣", "🍉", "💎", "🍀", "🎰"];
+        this.emojis = [
+          "https://imgur.com/RuJ1PRM", // 🍒 -> cherry.png
+          "https://imgur.com/4KJavXE", // 🍋 -> lemon.png
+          "https://imgur.com/kuzdcPD", // 🍇 -> grapes.png
+          "https://imgur.com/l9MJKUr", // 🔔 -> bell.png
+          "https://imgur.com/RK9Zrtm", // 7️⃣ -> 7.png
+          "https://imgur.com/tqS8x2D", // 🍉 -> watermelon.png
+          "https://imgur.com/CwWFZ8N", // 💎 -> diamond.png
+          "https://imgur.com/7426yVt", // 🍀 -> clover.png
+          "https://imgur.com/7IZfAu0"  // 🎰 -> slot.png
+        ];
         this.gridSize = { rows: 3, cols: 5 };
         this.slots = [];
         this.isSpinning = false;
@@ -378,7 +404,10 @@
         for (let i = 0; i < this.gridSize.rows * this.gridSize.cols; i++) {
           const reel = document.createElement("div");
           reel.className = "reel";
-          reel.textContent = "❓";
+          const img = document.createElement("img");
+          img.src = "❓"; // Placeholder during init
+          img.alt = "Slot Symbol";
+          reel.appendChild(img);
           this.slotGrid.appendChild(reel);
           this.slots.push(reel);
         }
@@ -480,8 +509,9 @@
 
         // Animation phase
         this.slots.forEach(slot => {
+          const img = slot.querySelector('img');
+          img.src = this.emojis[Math.floor(Math.random() * this.emojis.length)];
           slot.classList.add("spinning");
-          slot.textContent = this.emojis[Math.floor(Math.random() * this.emojis.length)];
         });
 
         await new Promise(resolve => setTimeout(resolve, 1500));
@@ -489,24 +519,25 @@
         // Final symbols
         let symbols = [];
         this.slots.forEach(slot => {
+          const img = slot.querySelector('img');
           const symbol = this.emojis[Math.floor(Math.random() * this.emojis.length)];
           symbols.push(symbol);
-          slot.textContent = symbol;
+          img.src = symbol;
           slot.classList.remove("spinning");
         });
 
         // Check for wins
         let totalWin = 0;
         const payouts = {
-          '💎': 100,
-          '7️⃣': 50,
-          '🔔': 30,
-          '🍒': 20,
-          '🍋': 20,
-          '🍇': 20,
-          '🍉': 20,
-          '🍀': 20,
-          '🎰': 20
+          'https://imgur.com/CwWFZ8N': 100,   // 💎 -> diamond.png
+          'https://imgur.com/RK9Zrtm': 50,    // 7️⃣ -> 7.png
+          'https://imgur.com/l9MJKUr': 30,    // 🔔 -> bell.png
+          'https://imgur.com/RuJ1PRM': 20,    // 🍒 -> cherry.png
+          'https://imgur.com/4KJavXE': 20,    // 🍋 -> lemon.png
+          'https://imgur.com/kuzdcPD': 20,    // 🍇 -> grapes.png
+          'https://imgur.com/tqS8x2D': 20,    // 🍉 -> watermelon.png
+          'https://imgur.com/7426yVt': 20,    // 🍀 -> clover.png
+          'https://imgur.com/7IZfAu0': 20     // 🎰 -> slot.png
         };
 
         for (let row = 0; row < this.gridSize.rows; row++) {
