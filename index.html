@@ -116,6 +116,7 @@
       padding: 20px;
       box-shadow: 0 0 30px rgba(230, 184, 0, 0.5);
       margin: 20px auto;
+      position: relative;
     }
 
     .slot-grid {
@@ -178,6 +179,23 @@
       min-height: 30px;
       text-shadow: 0 0 15px #e6b800;
       text-align: center;
+      position: relative;
+    }
+
+    .win-effect {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 40px;
+      opacity: 0;
+      animation: winAnimation 1.5s ease-out;
+    }
+
+    @keyframes winAnimation {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
+      50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+      100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
     }
 
     #coins {
@@ -285,7 +303,7 @@
       </div>
 
       <div class="payout-table">
-        <h3>Payout Table</h3>
+        <h3>Payout Table & Rules</h3>
         <ul>
           <li>5 x diamond.png: 100x Bet</li>
           <li>5 x 7.png: 50x Bet</li>
@@ -298,6 +316,7 @@
           <li>5 x slot.png: 20x Bet</li>
           <li>4 x Any Symbol: 10x Bet</li>
           <li>3 x Any Symbol: 5x Bet</li>
+          <li><strong>Rules:</strong> Match 3 or more symbols in a row to win. Higher matches increase payout. Spin costs your selected bet amount.</li>
         </ul>
       </div>
 
@@ -364,7 +383,7 @@
           const img = document.createElement("img");
           img.src = this.emojis[Math.floor(Math.random() * this.emojis.length)]; // Random initial image
           img.alt = ""; // No alt text to avoid fallback display
-          img.onerror = () => console.error(`Image failed to load: ${img.src}`); // Debug image load errors
+          img.onerror = () => console.error(`Image failed to load: ${img.src}`);
           reel.appendChild(img);
           this.slotGrid.appendChild(reel);
           this.slots.push(reel);
@@ -439,15 +458,17 @@
         this.result.textContent = "Spinning...";
         this.spinSound.play();
 
-        // Animation phase
-        this.slots.forEach(slot => {
+        // Sequential spinning animation for realism
+        for (let i = 0; i < this.slots.length; i++) {
+          const slot = this.slots[i];
           const img = slot.querySelector('img');
           img.src = this.emojis[Math.floor(Math.random() * this.emojis.length)];
           img.onerror = () => console.error(`Image failed to load during spin: ${img.src}`);
           slot.classList.add("spinning");
-        });
+          await new Promise(resolve => setTimeout(resolve, i * 200)); // Staggered start
+        }
 
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Total spin duration
 
         // Final symbols
         let symbols = [];
@@ -484,6 +505,7 @@
               let multiplier = count === 5 ? payouts[symbol] : count === 4 ? 10 : 5;
               totalWin += this.betAmount * multiplier;
               this.result.textContent = `🎉 Win on row ${row + 1}! +${this.betAmount * multiplier} Coins!`;
+              this.showWinEffect(); // Trigger win animation
             }
           }
         }
@@ -498,6 +520,15 @@
 
         this.updateUI();
         this.isSpinning = false;
+      }
+
+      showWinEffect() {
+        const resultDiv = document.getElementById("result");
+        const effect = document.createElement("div");
+        effect.className = "win-effect";
+        effect.textContent = "🎉💰🔔"; // Celebratory emojis
+        resultDiv.appendChild(effect);
+        setTimeout(() => effect.remove(), 1500); // Remove after animation
       }
 
       autoSpin() {
