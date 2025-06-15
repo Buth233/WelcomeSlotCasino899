@@ -68,16 +68,11 @@
       margin: 20px 0;
     }
 
-    .password-wrapper {
-      position: relative;
-      width: 80%;
-      max-width: 350px;
-    }
-
-    input[type="text"], input[type="password"] {
+    input[type="text"] {
       padding: 12px;
       font-size: 16px;
-      width: 100%;
+      width: 80%;
+      max-width: 350px;
       border-radius: 10px;
       border: 2px solid #e6b800;
       background: #2a2a2a;
@@ -90,21 +85,6 @@
       outline: none;
       border-color: #ff6200;
       box-shadow: 0 0 10px rgba(255, 98, 0, 0.5);
-    }
-
-    .toggle-password {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      cursor: pointer;
-      font-size: 18px;
-      color: #e6b800;
-      transition: color 0.3s ease;
-    }
-
-    .toggle-password:hover {
-      color: #ff6200;
     }
 
     button {
@@ -285,35 +265,12 @@
     <!-- Login Screen -->
     <div id="loginScreen" class="screen active">
       <h1>🎰 EliteSlotCasino</h1>
-      <h2>Enter the VIP Lounge</h2>
+      <h2>Enter Your Username</h2>
       <div class="form-group">
-        <input type="text" id="username" placeholder="Username" />
-        <div class="password-wrapper">
-          <input type="password" id="password" placeholder="Password" />
-          <span class="toggle-password" onclick="togglePassword('password')">👁️</span>
-        </div>
+        <input type="text" id="username" placeholder="Enter Username" />
         <div id="loginError" class="error"></div>
-        <button onclick="login()">Login</button>
-        <button onclick="showRegister()">Register</button>
+        <button onclick="login()">Enter Casino</button>
       </div>
-      <p>Not a VIP? <a class="link" onclick="showRegister()">Join the Casino</a></p>
-    </div>
-
-    <!-- Register Screen -->
-    <div id="registerScreen" class="screen">
-      <h1>🎰 EliteSlotCasino</h1>
-      <h2>Become a VIP</h2>
-      <div class="form-group">
-        <input type="text" id="regUsername" placeholder="Choose Username" />
-        <div class="password-wrapper">
-          <input type="password" id="regPassword" placeholder="Choose Password" />
-          <span class="toggle-password" onclick="togglePassword('regPassword')">👁️</span>
-        </div>
-        <div id="registerError" class="error"></div>
-        <button onclick="register()">Register</button>
-        <button onclick="showLogin()">Back to Login</button>
-      </div>
-      <p>Already a VIP? <a class="link" onclick="showLogin()">Login here</a></p>
     </div>
 
     <!-- Game Screen -->
@@ -367,15 +324,15 @@
       constructor() {
         this.coins = 1000;
         this.emojis = [
-          "https://imgur.com/RuJ1PRM", // 🍒 -> cherry.png
-          "https://imgur.com/4KJavXE", // 🍋 -> lemon.png
-          "https://imgur.com/kuzdcPD", // 🍇 -> grapes.png
-          "https://imgur.com/l9MJKUr", // 🔔 -> bell.png
-          "https://imgur.com/RK9Zrtm", // 7️⃣ -> 7.png
-          "https://imgur.com/tqS8x2D", // 🍉 -> watermelon.png
-          "https://imgur.com/CwWFZ8N", // 💎 -> diamond.png
-          "https://imgur.com/7426yVt", // 🍀 -> clover.png
-          "https://imgur.com/7IZfAu0"  // 🎰 -> slot.png
+          "https://imgur.com/RuJ1PRM", // cherry.png
+          "https://imgur.com/4KJavXE", // lemon.png
+          "https://imgur.com/kuzdcPD", // grapes.png
+          "https://imgur.com/l9MJKUr", // bell.png
+          "https://imgur.com/RK9Zrtm", // 7.png
+          "https://imgur.com/tqS8x2D", // watermelon.png
+          "https://imgur.com/CwWFZ8N", // diamond.png
+          "https://imgur.com/7426yVt", // clover.png
+          "https://imgur.com/7IZfAu0"  // slot.png
         ];
         this.gridSize = { rows: 3, cols: 5 };
         this.slots = [];
@@ -405,7 +362,7 @@
           const reel = document.createElement("div");
           reel.className = "reel";
           const img = document.createElement("img");
-          img.src = this.emojis[0]; // Use the first image as a default
+          img.src = this.emojis[Math.floor(Math.random() * this.emojis.length)]; // Random initial image
           img.alt = "Slot Symbol";
           reel.appendChild(img);
           this.slotGrid.appendChild(reel);
@@ -431,30 +388,26 @@
         document.getElementById(screenId).classList.add('active');
       }
 
-      validateInput(username, password) {
+      validateInput(username) {
         if (!username || username.length < 4) {
           return "Username must be at least 4 characters.";
-        }
-        if (!password || password.length < 8) {
-          return "Password must be at least 8 characters.";
         }
         return "";
       }
 
       login() {
         const username = document.getElementById("username").value.trim();
-        const password = document.getElementById("password").value;
         const errorDiv = document.getElementById("loginError");
 
-        const error = this.validateInput(username, password);
+        const error = this.validateInput(username);
         if (error) {
           errorDiv.textContent = error;
           return;
         }
 
-        if (!this.users[username] || this.users[username].password !== password) {
-          errorDiv.textContent = "Invalid username or password.";
-          return;
+        if (!this.users[username]) {
+          this.users[username] = { coins: 1000 };
+          localStorage.setItem('casinoUsers', JSON.stringify(this.users));
         }
 
         this.playerName.textContent = username;
@@ -463,34 +416,12 @@
         this.showScreen("casinoScreen");
       }
 
-      register() {
-        const username = document.getElementById("regUsername").value.trim();
-        const password = document.getElementById("regPassword").value;
-        const errorDiv = document.getElementById("registerError");
-
-        const error = this.validateInput(username, password);
-        if (error) {
-          errorDiv.textContent = error;
-          return;
-        }
-
-        if (this.users[username]) {
-          errorDiv.textContent = "Username already exists.";
-          return;
-        }
-
-        this.users[username] = { password, coins: 1000 };
-        localStorage.setItem('casinoUsers', JSON.stringify(this.users));
-        this.showScreen("loginScreen");
-      }
-
       logout() {
         this.users[this.playerName.textContent].coins = this.coins;
         localStorage.setItem('casinoUsers', JSON.stringify(this.users));
         this.stopAutoSpin();
         this.showScreen("loginScreen");
         document.getElementById("username").value = "";
-        document.getElementById("password").value = "";
       }
 
       async spin() {
@@ -529,15 +460,15 @@
         // Check for wins
         let totalWin = 0;
         const payouts = {
-          'https://imgur.com/CwWFZ8N': 100,   // 💎 -> diamond.png
-          'https://imgur.com/RK9Zrtm': 50,    // 7️⃣ -> 7.png
-          'https://imgur.com/l9MJKUr': 30,    // 🔔 -> bell.png
-          'https://imgur.com/RuJ1PRM': 20,    // 🍒 -> cherry.png
-          'https://imgur.com/4KJavXE': 20,    // 🍋 -> lemon.png
-          'https://imgur.com/kuzdcPD': 20,    // 🍇 -> grapes.png
-          'https://imgur.com/tqS8x2D': 20,    // 🍉 -> watermelon.png
-          'https://imgur.com/7426yVt': 20,    // 🍀 -> clover.png
-          'https://imgur.com/7IZfAu0': 20     // 🎰 -> slot.png
+          'https://imgur.com/CwWFZ8N': 100,   // diamond.png
+          'https://imgur.com/RK9Zrtm': 50,    // 7.png
+          'https://imgur.com/l9MJKUr': 30,    // bell.png
+          'https://imgur.com/RuJ1PRM': 20,    // cherry.png
+          'https://imgur.com/4KJavXE': 20,    // lemon.png
+          'https://imgur.com/kuzdcPD': 20,    // grapes.png
+          'https://imgur.com/tqS8x2D': 20,    // watermelon.png
+          'https://imgur.com/7426yVt': 20,    // clover.png
+          'https://imgur.com/7IZfAu0': 20     // slot.png
         };
 
         for (let row = 0; row < this.gridSize.rows; row++) {
@@ -594,25 +525,10 @@
     const game = new EliteSlotCasino();
 
     function login() { game.login(); }
-    function register() { game.register(); }
     function showLogin() { game.showScreen("loginScreen"); }
-    function showRegister() { game.showScreen("registerScreen"); }
     function spin() { game.spin(); }
     function autoSpin() { game.autoSpin(); }
     function logout() { game.logout(); }
-
-    // Toggle password visibility
-    function togglePassword(inputId) {
-      const passwordInput = document.getElementById(inputId);
-      const toggleIcon = passwordInput.nextElementSibling;
-      if (passwordInput.type === "password") {
-        passwordInput.type = "text";
-        toggleIcon.textContent = "👁️‍🗨️"; // Open eye
-      } else {
-        passwordInput.type = "password";
-        toggleIcon.textContent = "👁️"; // Closed eye
-      }
-    }
   </script>
 </body>
 </html>
