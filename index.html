@@ -364,6 +364,7 @@
           const img = document.createElement("img");
           img.src = this.emojis[Math.floor(Math.random() * this.emojis.length)]; // Random initial image
           img.alt = ""; // No alt text to avoid fallback display
+          img.onerror = () => console.error(`Image failed to load: ${img.src}`); // Debug image load errors
           reel.appendChild(img);
           this.slotGrid.appendChild(reel);
           this.slots.push(reel);
@@ -442,6 +443,7 @@
         this.slots.forEach(slot => {
           const img = slot.querySelector('img');
           img.src = this.emojis[Math.floor(Math.random() * this.emojis.length)];
+          img.onerror = () => console.error(`Image failed to load during spin: ${img.src}`);
           slot.classList.add("spinning");
         });
 
@@ -454,6 +456,7 @@
           const symbol = this.emojis[Math.floor(Math.random() * this.emojis.length)];
           symbols.push(symbol);
           img.src = symbol;
+          img.onerror = () => console.error(`Image failed to load after spin: ${img.src}`);
           slot.classList.remove("spinning");
         });
 
